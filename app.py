@@ -1,9 +1,17 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+import sqlite3
+import pandas as pd
+import os
 
 app = Flask(__name__)
 
+#https://stackoverflow.com/questions/36015756/no-such-file-or-directory-uploads
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static/files')
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
 
 class Lead(db.Model):
@@ -25,9 +33,23 @@ class Lead(db.Model):
     def __repr__(self):
         return '<Lead %r>' % self.id
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    if request.method == 'POST':
+        #https://medevel.com/flask-tutorial-upload-csv-file-and-insert-rows-into-the-database/
+        uploaded_file = request.files['file']
+        if uploaded_file.filename != '':
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], uploaded_file.filename)
+            uploaded_file.save(file_path)
+            #https://stackoverflow.com/questions/41900593/csv-into-sqlite-table-python
+            df = pd.read_csv(UPLOAD_FOLDER + '/' + uploaded_file.filename)
+            df.columns = df.columns.str.strip()
+            con = sqlite3.connect("test.db")
+            df.to_sql('test_table', con)
+            con.close()
+        return redirect(url_for('index'))
+    else:
+        return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

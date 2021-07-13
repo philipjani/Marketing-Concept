@@ -6,7 +6,7 @@
 
 {% block body %}
 
-<div>
+<!-- <div>
     <table>
         <tr>
             <th>First Name</th>
@@ -39,6 +39,12 @@
             <th>Test</th>
         </tr>
     </table>
-</div>
+</div> -->
+
+<h1>Upload your CSV file</h1>
+    <form method="POST" action="" enctype="multipart/form-data">
+      <p><input type="file" multiple name="file"></p>
+      <p><input type="submit" value="Submit"></p>
+    </form>
 
 {% endblock %}
