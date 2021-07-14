@@ -45,7 +45,10 @@ def index():
             df = pd.read_csv(UPLOAD_FOLDER + '/' + uploaded_file.filename)
             df.columns = df.columns.str.strip()
             con = sqlite3.connect("test.db")
-            df.to_sql('test_table', con)
+            #https://stackoverflow.com/questions/3548673/how-can-i-replace-or-strip-an-extension-from-a-filename-in-python
+            filename = os.path.splitext(uploaded_file.filename)
+            filename = filename[0]
+            df.to_sql(filename, con)
             con.close()
         return redirect(url_for('index'))
     else:
