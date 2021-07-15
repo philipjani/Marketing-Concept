@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+
+<h1 style="text-align:center">Leads Table</h1>
+
+<div>
+    <table>
+        <tr>
+            <!-- <th>ID</th> -->
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip Code</th>
+            <th>Owner Occupied</th>
+            <th>Property Type</th>
+            <th>MLS Status</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+            <th>Contacted?</th>
+            <th>Time of Contact</th>
+            <th>Sent Template</th>
+            <th>Response</th>
+            <th>Motivation Level</th>
+        </tr>
+        {%  for item in data %}
+        <tr>
+            <!-- <td>{{item[0]}}</td> -->
+            <td>{{item[1]}}</td>
+            <td>{{item[2]}}</td>
+            <td>{{item[3]}}</td>
+            <td>{{item[4]}}</td>
+            <td>{{item[5]}}</td>
+            <td>{{item[6]}}</td>
+            <td>{{item[7]}}</td>
+            <td>{{item[8]}}</td>
+            <td>{{item[9]}}</td>
+            <td>{{item[10]}}</td>
+            <td>{{item[11]}}</td>
+            <td>{{item[12]}}</td>
+            <td>{{item[13]}}</td>
+            <td>{{item[14]}}</td>
+            <td>{{item[15]}}</td>
+            <td>{{item[16]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
