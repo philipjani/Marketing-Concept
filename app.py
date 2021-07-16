@@ -58,14 +58,26 @@ def index():
     else:
         return render_template('index.html')
 
-@app.route('/test')
-def test():
+@app.route('/leads')
+def leads():
     con = sqlite3.connect('test.db')
 
     cur = con.cursor()
-    cur.execute("SELECT * FROM lead LIMIT 15;")
+    cur.execute("SELECT * FROM lead WHERE property_type LIKE '%Residential%' LIMIT 10;")
     data = cur.fetchall()
-    return render_template('test.html', data=data)
+    return render_template('leads.html', data=data)
+
+@app.route('/templates')
+def templates():
+    return render_template('templates.html')
+
+@app.errorhandler(404)
+def page_not_found(error):
+   return render_template('404.html', title = '404'), 404
+
+@app.errorhandler(500)
+def page_not_found(error):
+   return render_template('500.html', title = '500'), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

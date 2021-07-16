@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block head %} 
+
+{% endblock %} 
+
+{% block body %} 
+    <br><br><br>
+    <form action="POST">
+        <div class="mb-3">
+            <label class="form-label">Template Name</label>
+            <input type="email" class="form-control" placeholder="Name">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">SMS Message</label>
+            <textarea class="form-control" rows="3" placeholder="SMS Template"></textarea>
+        </div>
+        <div style="float: right;">
+            <input class="btn btn-secondary " type="submit" value="Submit">
+          </div>
+    </form>
+
+{% endblock %}

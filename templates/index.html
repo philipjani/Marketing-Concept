@@ -6,13 +6,19 @@
 
 {% block body %}
 
-<h1 style="text-align: center;">Marketing Concept (Lead Qualifier)</h1>
+<br><br><br><br><br><br><br>
+<h1 style="text-align: center;">Automated Lead Generator and Lead Qualifier</h1>
 
 <div style="text-align: center;">
-    <h3>Upload your CSV file to the Leads Database</h3>
+    <br><h4>Upload your CSV file to the Leads Database</h4>
     <form method="POST" action="" enctype="multipart/form-data">
-      <p><input type="file" multiple name="file"></p>
-      <p><input type="submit" value="Submit"></p>
+      <br><br>
+      <div class="mb-4" style="padding-left: 25%; padding-right: 25%;">
+        <input type="file" name="file" class="form-control" id="formFileMultiple" multiple>
+      </div>
+      <div>
+        <input class="btn btn-secondary " type="submit" value="Submit">
+      </div>
     </form>
 </div>
 

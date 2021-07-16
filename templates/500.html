@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block head %} 
+
+{% endblock %}
+
+{% block body %}
+
+<div class="page-wrap d-flex flex-row align-items-center" style="margin-top: 200px;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12 text-center">
+                <span class="display-1 d-block">500</span>
+                <div class="mb-4 lead">Internal Server Error.</div>
+                <a href="{{url_for('index')}}" class="btn btn-link">Back to Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
