@@ -107,6 +107,22 @@ def delete(id):
     except:
         return 'There was an error in deleting the template.'
 
+@app.route('/update/<int:id>', methods=['GET', 'POST'])
+def update(id):
+    template_update = Template.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        template_update.name = request.form['name']
+        template_update.message = request.form['message']
+
+        try:
+            db.session.commit()
+            return redirect('/templates')
+        except:
+            return 'There was an error editing the template.'
+    else:
+        return render_template('update.html', template_update=template_update)
+
 
 @app.errorhandler(404)
 def page_not_found(error):

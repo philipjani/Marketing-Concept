@@ -4,8 +4,10 @@
 
 {% endblock %} 
 
-{% block body %} 
-    <br><br><br>
+{% block body %}
+    <br>
+    <h1 style="text-align: center;">SMS Templates</h1>
+    <br>
     <form action="" method="POST">
         <div class="mb-3">
             <label class="form-label">Template Name</label>
@@ -16,50 +18,56 @@
             <textarea class="form-control" rows="3" placeholder="SMS Template" name="message"></textarea>
         </div>
         <div style="float: right;">
-            <input class="btn btn-secondary " type="submit" value="Save Template">
+            <input class="btn btn-secondary" type="submit" value="Save Template">
           </div>
     </form>
     <br><br>
     <label class="form-label">Saved Templates</label>
+    
     {% for template in sms_templates%}
         <ul class="list-group" style="margin-bottom: 15px;">
             <li class="list-group-item">
                 <h6>Template Name:</h6> {{template.name}} <br><br>
                 <h6>Template Message:</h6> {{template.message}} <br><br>
                 <a href="/delete/{{template.id}}"><button class="btn btn-outline-danger" style="float: right;">Delete</button></a>
+                <input type="submit" name="select_template" value="Select" class="btn btn-outline-primary">
+                <a href="/update/{{template.id}}"><button class="btn btn-secondary">Edit</button></a>
 
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModalCenter">
+                <!-- <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModalCenter">
                     Edit
-                </button>
-                
-                <!-- Modal -->
-                <div class="modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
+                </button> -->
+            </li>
+        </ul>
+
+        <!-- Modal -->
+        <!-- <div class="modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Edit Template</h5>
                         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
+                    </div>
+                    <div class="modal-body">
+                        <form action="" method="POST" name="modal-popup-form">
                             <div class="mb-3">
                                 <label class="form-label">Template Name</label>
-                                <input class="form-control" placeholder="Name" name="name">
+                                <input class="form-control" placeholder="Name" name="edit_name" value="{{template.name}}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">SMS Message</label>
-                                <textarea class="form-control" rows="3" placeholder="SMS Template" name="message"></textarea>
+                                <textarea class="form-control" rows="3" placeholder="SMS Template" name="edit_message">{{template.message}}</textarea>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-outline-success">Save changes</button>
-                        </div>
+                        </form>
                     </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a href="/update/{{template.id}}"><button type="submit" class="btn btn-outline-success">Save changes</button></a>
                     </div>
                 </div>
-            </li>
-        </ul>
+            </div>
+        </div> -->
+
     {% endfor %}
 
     
