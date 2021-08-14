@@ -6,7 +6,7 @@
 
 {% block body %}
 
-<br><h1 style="text-align:center">Leads Table</h1><br>
+<br><h1 style="text-align:center">Lead Store</h1><br>
 
 <div class="table-responsive">
     <table class="table table-bordered" style="border-radius: 4px; overflow: hidden;">
@@ -14,6 +14,7 @@
             <!-- <th>ID</th> -->
             <th>First Name</th>
             <th>Last Name</th>
+            <th>Age</th>
             <th>Address</th>
             <th>City</th>
             <th>State</th>
@@ -48,9 +49,11 @@
             <td>{{item[14]}}</td>
             <td>{{item[15]}}</td>
             <td>{{item[16]}}</td>
+            <td>{{item[17]}}</td>
         </tr>
         {% endfor %}
     </table>
+    <button>get phone numbers and emails</button>
 </div>
 
 {% endblock %}

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import sqlite3
@@ -14,6 +14,13 @@ UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static/files')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
+# https://stackoverflow.com/questions/17768940/target-database-is-not-up-to-date/17776558
+# For data base migration issues: try running below commands in powershell terminal
+# $ flask db init
+# $ flask db stamp head
+# $ flask db migrate
+# $ flask db upgrade
+
 #https://flask-migrate.readthedocs.io/en/latest/
 migrate = Migrate(app, db)
 
@@ -21,6 +28,7 @@ class Lead(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(200), nullable=False)
     last_name = db.Column(db.String(200), nullable=False)
+    age = db.Column(db.Integer, default=0)
     address = db.Column(db.String(200), nullable=False)
     city = db.Column(db.String(200), nullable=False)
     state = db.Column(db.String(200), nullable=False)
@@ -35,9 +43,11 @@ class Lead(db.Model):
     template_sent = db.Column(db.String(200), nullable=False)
     response = db.Column(db.String(200), nullable=False)
     motivation_level = db.Column(db.String(200), nullable=False)
+    mobile_phones = db.relationship('Phone_Number', backref='lead')
+    emails = db.relationship('Email', backref='lead')
 
     def __repr__(self):
-        return '<Lead %r>' % self.id
+        return f'<Lead: {self.id}>'
 
 class Template(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -45,7 +55,24 @@ class Template(db.Model):
     message = db.Column(db.String(200), nullable=False)
 
     def __repr__(self):
-        return '<Template %r>' % self.id
+        return f'<Template: {self.id}>'
+
+class Phone_Number(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mobile_phone = db.Column(db.String(20), nullable=False)
+    lead_id = db.Column(db.Integer, db.ForeignKey('lead.id'))
+
+    def __repr__(self):
+        return f'<Phone_Number: {self.id}>'
+
+class Email(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(20), nullable=False)
+    lead_id = db.Column(db.Integer, db.ForeignKey('lead.id'))
+
+    def __repr__(self):
+        return f'<Email: {self.id}>'
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -71,12 +98,16 @@ def index():
 
 @app.route('/leads')
 def leads():
-    con = sqlite3.connect('test.db')
+    try:
+        con = sqlite3.connect('test.db')
 
-    cur = con.cursor()
-    cur.execute("SELECT * FROM lead WHERE property_type LIKE '%Residential%' LIMIT 10;")
-    data = cur.fetchall()
-    return render_template('leads.html', data=data)
+        cur = con.cursor()
+        cur.execute("SELECT * FROM lead WHERE property_type LIKE '%Residential%' AND mls_status LIKE '%FAIL%' LIMIT 10;")
+        data = cur.fetchall()
+        con.close()
+        return render_template('leads.html', data=data)
+    except:
+        return 'There was an issue retrieving your leads.'
 
 @app.route('/templates', methods = ["POST", "GET"])
 def templates():
@@ -89,7 +120,7 @@ def templates():
             db.session.commit()
             return redirect('/templates')
         except:
-            return 'There was an issue adding your template'
+            return 'There was an issue adding your template.'
     else:
         #https://stackoverflow.com/questions/2633218/how-can-i-select-all-rows-with-sqlalchemy/26217436
         sms_templates = Template.query.all()
@@ -122,6 +153,14 @@ def update(id):
             return 'There was an error editing the template.'
     else:
         return render_template('update.html', template_update=template_update)
+
+@app.route('/webhook', methods=['GET', 'POST'])
+def webhook():
+    if request.method == 'POST':
+        print(request.json)
+        return f'{request.json}', 200
+    else:
+        abort(400)
 
 
 @app.errorhandler(404)
