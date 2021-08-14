@@ -78,6 +78,29 @@ def leads():
     data = cur.fetchall()
     return render_template('leads.html', data=data)
 
+#Added by Dylan
+def filter(category, query_string):
+    con = sqlite3.connect('test.db')
+
+    cur = con.cursor()
+    statement = (f"SELECT * FROM lead WHERE {category} LIKE '%{query_string}%' LIMIT 10;")
+    cur.execute(statement)
+    data = cur.fetchall()
+    return data
+
+
+#Added by Dylan
+@app.route('/updated_filter', methods = ["POST", "GET"])
+def updated_filter():
+    if request.method == 'POST':
+        data = request.form.get("comp_select")
+        data2 = request.form.get("info")
+        results = filter(data, data2)
+
+        #change below to render_template
+        return render_template('leads.html', data=results)
+
+
 @app.route('/templates', methods = ["POST", "GET"])
 def templates():
     if request.method == 'POST':

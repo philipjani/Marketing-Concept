@@ -8,6 +8,27 @@
 
 <br><h1 style="text-align:center">Leads Table</h1><br>
 
+<!-- filter table dropdown  DYLAN ADDED-->
+<form class="form-inline" method="POST" action="{{ url_for('updated_filter') }}">
+  <div class="form-group">
+      <label for="exampleFormControlInput1">Filter by </label>
+    <div class="input-group">
+            <select name="comp_select" class="selectpicker form-control">
+                <option>last_name</option>
+                <option>city</option>
+                <option>zip_code</option>
+            </select>
+    </div>
+      <div class="form-group">
+          <label for="exampleFormControlInput1">Enter Filter Query</label>
+          <input name="info" class="form-control" id="exampleFormControlInput1" placeholder="name/city/zip">
+      </div>
+    <button type="submit" class="btn btn-primary">Go</button>
+  </div>
+</form>
+
+
+
 <div class="table-responsive">
     <table class="table table-bordered" style="border-radius: 4px; overflow: hidden;">
         <tr>
