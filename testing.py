@@ -43,6 +43,7 @@ try:
     '''
   f = open("blob.json")
   person_data = json.load(f)
+  first_name = person_data['person']['name']['firstName']
   last_name = person_data['person']['name']['lastName']
   middle_name = person_data['person']['name']['middleName']
   age = person_data['person']['age']
@@ -52,8 +53,8 @@ try:
   mobile_phones = [x['number'] for x in phone_data if x['type'] == 'mobile' and x['isConnected'] == True]
 
   try:
-    cur.execute("UPDATE lead SET age = ? WHERE last_name = ? OR middle_name = ?", (age, last_name, middle_name)) #changed
-    #con.commit()
+    cur.execute("UPDATE lead SET age = ? WHERE last_name = ? AND (first_name = ? OR first_name = ?)", (age, last_name, middle_name, first_name)) #changed
+    con.commit()
     cur.execute("INSERT INTO phone_number (lead_id) VALUES (?)", id)
     cur.execute("INSERT INTO email (lead_id) VALUES (?)", id)
     cur.executemany("INSERT INTO phone_number VALUES (?,?,?,?,?,?)", mobile_phones)
