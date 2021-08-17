@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import sqlite3
@@ -21,6 +21,7 @@ class Lead(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(200), nullable=False)
     last_name = db.Column(db.String(200), nullable=False)
+    age = db.Column(db.Integer, default=0) #just added
     address = db.Column(db.String(200), nullable=False)
     city = db.Column(db.String(200), nullable=False)
     state = db.Column(db.String(200), nullable=False)
@@ -35,9 +36,29 @@ class Lead(db.Model):
     template_sent = db.Column(db.String(200), nullable=False)
     response = db.Column(db.String(200), nullable=False)
     motivation_level = db.Column(db.String(200), nullable=False)
+    mobile_phones = db.relationship('Phone_Number', backref='lead')
+    emails = db.relationship('Email', backref='lead')
 
     def __repr__(self):
-        return '<Lead %r>' % self.id
+        return f'<Lead: {self.id}>'
+
+
+class Phone_Number(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mobile_phone = db.Column(db.String(20), nullable=False)
+    lead_id = db.Column(db.Integer, db.ForeignKey('lead.id'))
+
+    def __repr__(self):
+        return f'<Phone_Number: {self.id}>'
+
+class Email(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(20), nullable=False)
+    lead_id = db.Column(db.Integer, db.ForeignKey('lead.id'))
+
+    def __repr__(self):
+        return f'<Email: {self.id}>'
+
 
 class Template(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -46,6 +67,7 @@ class Template(db.Model):
 
     def __repr__(self):
         return '<Template %r>' % self.id
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -71,12 +93,15 @@ def index():
 
 @app.route('/leads')
 def leads():
-    con = sqlite3.connect('test.db')
-
-    cur = con.cursor()
-    cur.execute("SELECT * FROM lead WHERE property_type LIKE '%Residential%' LIMIT 10;")
-    data = cur.fetchall()
-    return render_template('leads.html', data=data)
+    try:
+        con = sqlite3.connect('test.db')
+        cur = con.cursor()
+        cur.execute("SELECT * FROM lead WHERE property_type LIKE '%Residential%' AND mls_status LIKE '%FAIL%' LIMIT 10;")
+        data = cur.fetchall()
+        con.close()
+        return render_template('leads.html', data=data)
+    except:
+        return 'There was an issue retrieving your leads.'
 
 #Added by Dylan
 def filter(category, query_string):
@@ -93,9 +118,9 @@ def filter(category, query_string):
 @app.route('/updated_filter', methods = ["POST", "GET"])
 def updated_filter():
     if request.method == 'POST':
-        data = request.form.get("comp_select")
-        data2 = request.form.get("info")
-        results = filter(data, data2)
+        column = request.form.get("comp_select")
+        data = request.form.get("info")
+        results = filter(column, data)
 
         #change below to render_template
         return render_template('leads.html', data=results)
@@ -145,6 +170,15 @@ def update(id):
             return 'There was an error editing the template.'
     else:
         return render_template('update.html', template_update=template_update)
+
+
+@app.route('/webhook', methods=['GET', 'POST'])
+def webhook():
+    if request.method == 'POST':
+        print(request.json)
+        return f'{request.json}', 200
+    else:
+        abort(400)
 
 
 @app.errorhandler(404)

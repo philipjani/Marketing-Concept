@@ -1,0 +1,112 @@
+{
+  "person": {
+    "name": {
+      "firstName": "Ralph",
+      "middleName": "Stanley",
+      "lastName": "Michelot"
+    },
+    "age": "45",
+    "addresses": [
+      {
+        "street": "35 Brooklyn Ave",
+        "unit": "3B",
+        "city": "Valley Stream",
+        "state": "NY",
+        "zip": "11581",
+        "firstReportedDate": "2/3/2014",
+        "lastReportedDate": "6/1/2021"
+      },
+      {
+        "street": "60 Plainfield Ave",
+        "unit": "5",
+        "city": "Floral Park",
+        "state": "NY",
+        "zip": "11001",
+        "firstReportedDate": "9/1/2012",
+        "lastReportedDate": "9/1/2012"
+      },
+      {
+        "street": "959 Church St",
+        "unit": "",
+        "city": "Reading",
+        "state": "PA",
+        "zip": "19601",
+        "firstReportedDate": "10/31/2007",
+        "lastReportedDate": "10/31/2007"
+      },
+      {
+        "street": "959 Church St",
+        "unit": "",
+        "city": "Berkley",
+        "state": "PA",
+        "zip": "",
+        "firstReportedDate": "6/13/2007",
+        "lastReportedDate": "6/19/2007"
+      },
+      {
+        "street": "10901 Monterey St",
+        "unit": "",
+        "city": "Jamaica",
+        "state": "NY",
+        "zip": "11429",
+        "firstReportedDate": "5/3/2007",
+        "lastReportedDate": "5/3/2007"
+      }
+    ],
+    "phones": [
+      {
+        "number": "(516) 502-6206",
+        "type": "mobile",
+        "isConnected": true,
+        "firstReportedDate": "5/1/2006",
+        "lastReportedDate": "6/1/2021"
+      },
+      {
+        "number": "(516) 326-7739",
+        "type": "landline",
+        "isConnected": true,
+        "firstReportedDate": "4/1/1994",
+        "lastReportedDate": "7/15/2019"
+      },
+      {
+        "number": "(516) 987-1219",
+        "type": "mobile",
+        "isConnected": true,
+        "firstReportedDate": "10/29/2019",
+        "lastReportedDate": "3/1/2021"
+      },
+      {
+        "number": "(516) 326-2219",
+        "type": "landline",
+        "isConnected": true,
+        "firstReportedDate": "3/16/2016",
+        "lastReportedDate": "3/16/2016"
+      }
+    ],
+    "emails": [
+      {
+        "email": "jmichelot@gmail.com"
+      },
+      {
+        "email": "rmichelot@gmail.com"
+      }
+    ]
+  },
+  "message": "",
+  "pagination": {
+    "currentPageNumber": 1,
+    "resultsPerPage": 1,
+    "totalPages": 1
+  },
+  "databaseQueryInfo": [],
+  "searchCriteria": [],
+  "totalRequestExecutionTimeMs": 135,
+  "requestId": "ebe5d959-8680-4ae9-9253-30052726d72b",
+  "requestType": "DevAPIContactEnrich",
+  "requestTime": "2021-07-19T20:39:38.5162521-07:00",
+  "isError": false,
+  "error": {
+    "inputErrors": [],
+    "warnings": []
+  }
+}
