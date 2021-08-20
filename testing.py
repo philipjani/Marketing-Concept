@@ -1,3 +1,5 @@
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text, create_engine
 import requests
 import sqlite3
 import json
@@ -54,11 +56,20 @@ try:
 
   try:
     cur.execute("UPDATE lead SET age = ? WHERE last_name = ? AND (first_name = ? OR first_name = ?)", (age, last_name, middle_name, first_name)) #changed
+
+    #Create SQLAlchemy connection and query for user that was just updated to get the id
+    engine = create_engine('sqlite:///test.db')
+    t = text("SELECT * from lead WHERE last_name=:last_name AND (first_name=:middle_name OR first_name=:first_name)")
+    connection = engine.connect()
+    results = connection.execute(t, last_name=last_name, middle_name=middle_name, first_name=first_name)
+    l_id = results.fetchone()[0]
+
+    for phone in mobile_phones:
+      cur.execute("INSERT INTO phone__number (mobile_phone, lead_id) VALUES (?, ?)", (phone, l_id))
+
+    for email in emails:
+      cur.execute("INSERT INTO email (email, lead_id) VALUES (?, ?)", (email, l_id))
     con.commit()
-    cur.execute("INSERT INTO phone_number (lead_id) VALUES (?)", id)
-    cur.execute("INSERT INTO email (lead_id) VALUES (?)", id)
-    cur.executemany("INSERT INTO phone_number VALUES (?,?,?,?,?,?)", mobile_phones)
-    cur.executemany("INSERT INTO email VALUES (?,?,?,?,?,?)", emails)
   except:
     print("There was an error inserting API data into database.")
 except:

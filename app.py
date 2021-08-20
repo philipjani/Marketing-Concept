@@ -51,6 +51,7 @@ class Phone_Number(db.Model):
     def __repr__(self):
         return f'<Phone_Number: {self.id}>'
 
+
 class Email(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(20), nullable=False)
