@@ -94,6 +94,7 @@ class Email(db.Model):
 
 
 
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -195,6 +196,15 @@ def update(id):
             return 'There was an error editing the template.'
     else:
         return render_template('update.html', template_update=template_update)
+
+@app.route('/webhook', methods=['GET', 'POST'])
+def webhook():
+    if request.method == 'POST':
+        print(request.json)
+        return f'{request.json}', 200
+    else:
+        abort(400)
+
 
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
