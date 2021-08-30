@@ -1,10 +1,15 @@
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text, create_engine
 import requests
+import sqlite3
 import json
 import os
+
 
 try:
   con = sqlite3.connect('test.db')
   cur = con.cursor()
+  '''
   cur.execute("SELECT * FROM lead WHERE property_type LIKE '%Residential%' AND mls_status LIKE '%FAIL%' LIMIT 10;")
   data = cur.fetchall()
 
@@ -37,19 +42,35 @@ try:
     response_body = r.text
 
     person_data = json.loads(response_body)
-    age = person_data['person']['age']
-    email_data = person_data['person']['emails']
-    emails = [x['email'] for x in email_data]
-    phone_data = person_data['person']['phones']
-    mobile_phones = [x['number'] for x in phone_data if x['type'] == 'mobile' and x['isConnected'] == True]
+    '''
+  f = open("blob.json")
+  person_data = json.load(f)
+  first_name = person_data['person']['name']['firstName']
+  last_name = person_data['person']['name']['lastName']
+  middle_name = person_data['person']['name']['middleName']
+  age = person_data['person']['age']
+  email_data = person_data['person']['emails']
+  emails = [x['email'] for x in email_data]
+  phone_data = person_data['person']['phones']
+  mobile_phones = [x['number'] for x in phone_data if x['type'] == 'mobile' and x['isConnected'] == True]
 
-    try:
-      cur.execute("INSERT INTO lead (age) VALUES (?)", age)
-      cur.execute("INSERT INTO phone_number (lead_id) VALUES (?)", id)
-      cur.execute("INSERT INTO email (lead_id) VALUES (?)", id)
-      cur.executemany("INSERT INTO phone_number VALUES (?,?,?,?,?,?)", mobile_phones)
-      cur.executemany("INSERT INTO email VALUES (?,?,?,?,?,?)", emails)
-    except:
-      return "There was an error inserting API data into database."
+  try:
+    cur.execute("UPDATE lead SET age = ? WHERE last_name = ? AND (first_name = ? OR first_name = ?)", (age, last_name, middle_name, first_name)) #changed
+
+    #Create SQLAlchemy connection and query for user that was just updated to get the id
+    engine = create_engine('sqlite:///test.db')
+    t = text("SELECT * from lead WHERE last_name=:last_name AND (first_name=:middle_name OR first_name=:first_name)")
+    connection = engine.connect()
+    results = connection.execute(t, last_name=last_name, middle_name=middle_name, first_name=first_name)
+    l_id = results.fetchone()[0]
+
+    for phone in mobile_phones:
+      cur.execute("INSERT INTO phone__number (mobile_phone, lead_id) VALUES (?, ?)", (phone, l_id))
+
+    for email in emails:
+      cur.execute("INSERT INTO email (email, lead_id) VALUES (?, ?)", (email, l_id))
+    con.commit()
+  except:
+    print("There was an error inserting API data into database.")
 except:
-  return "There was an error in fetching lead data from the API."
+  print("There was an error in fetching lead data from the API.")
