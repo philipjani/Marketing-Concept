@@ -91,7 +91,7 @@ for row in rows:
 
 
 
-  # cur.execute(f"""SELECT 
+  # cur.execute(f"""SELECT
   #                   L.`index`, 
   #                   L.first_name,
   #                   L.last_name,
@@ -117,7 +117,7 @@ for row in rows:
   #                 """)
 
 
-  # cur.execute(f"""SELECT 
+  # cur.execute(f"""SELECT DISTINCT
   #                 L.`index`, 
   #                 L.first_name,
   #                 L.last_name,
@@ -142,6 +142,119 @@ for row in rows:
   #               WHERE L.`index` IN {tuple_selected}
   #               """)
 
+
+  # cur.execute(f"""SELECT group_concat(mobile_phone) FROM (SELECT DISTINCT
+  #                 L.`index`, 
+  #                 L.first_name,
+  #                 L.last_name,
+  #                 L.age,
+  #                 L.address,
+  #                 L.city,
+  #                 L.state,
+  #                 L.zip,
+  #                 L.owner_occupied,
+  #                 L.property_type,
+  #                 L.mls_status,
+  #                 P.mobile_phone,
+  #                 E.email,
+  #                 L.contacted,
+  #                 L.contact_time,
+  #                 L.template_sent,
+  #                 L.response,
+  #                 L.motivation_level
+  #                 FROM lead L
+  #                 INNER JOIN phone__number P ON L.`index` = P.lead_id
+  #                 INNER JOIN Email E on L.`index` = E.lead_id
+  #               WHERE L.`index` IN {tuple_selected})
+  #               """)
+
+
+  # cur.execute(f"""SELECT  group_concat(S.mobile_phone)
+  #           FROM lead L INNER JOIN (SELECT DISTINCT P.mobile_phone
+  #                 FROM lead L
+  #                 INNER JOIN phone__number P ON L.`index` = P.lead_id
+  #               ) S
+  #               WHERE L.`index` IN {tuple_selected};
+  #               """)
+
+  cur.execute(f"""SELECT 
+                  P.`index`, 
+                  P.first_name,
+                  P.last_name,
+                  P.age,
+                  P.address,
+                  P.city,
+                  P.state,
+                  P.zip,
+                  P.owner_occupied,
+                  P.property_type,
+                  P.mls_status,
+                  group_concat(P.mobile_phone),
+                  group_concat(E.email),
+                  P.contacted,
+                  P.contact_time,
+                  P.template_sent,
+                  P.response,
+                  P.motivation_level
+                  FROM (SELECT DISTINCT
+                    L.`index`, 
+                    L.first_name,
+                    L.last_name,
+                    L.age,
+                    L.address,
+                    L.city,
+                    L.state,
+                    L.zip,
+                    L.owner_occupied,
+                    L.property_type,
+                    L.mls_status,
+                    P.mobile_phone,
+                    L.contacted,
+                    L.contact_time,
+                    L.template_sent,
+                    L.response,
+                    L.motivation_level
+                  FROM lead L
+                  INNER JOIN phone__number P ON L.`index` = P.lead_id
+                  WHERE L.`index` IN {tuple_selected}
+                ) P
+                  INNER JOIN (SELECT DISTINCT E.lead_id, E.email
+                  FROM lead L
+                  INNER JOIN Email E ON L.`index` = E.lead_id
+                  WHERE L.`index` IN {tuple_selected}
+                ) E;
+                """)
+  
+  cur.execute(f"""SELECT 
+                  group_concat(P.mobile_phone)
+                  FROM (SELECT DISTINCT
+                    L.`index`, 
+                    L.first_name,
+                    L.last_name,
+                    L.age,
+                    L.address,
+                    L.city,
+                    L.state,
+                    L.zip,
+                    L.owner_occupied,
+                    L.property_type,
+                    L.mls_status,
+                    P.mobile_phone,
+                    L.contacted,
+                    L.contact_time,
+                    L.template_sent,
+                    L.response,
+                    L.motivation_level
+                  FROM lead L
+                  INNER JOIN phone__number P ON L.`index` = P.lead_id
+                  WHERE L.`index` IN {tuple_selected}
+                ) P
+                  INNER JOIN (SELECT DISTINCT E.lead_id, E.email
+                  FROM lead L
+                  INNER JOIN Email E ON L.`index` = E.lead_id
+                  WHERE L.`index` IN {tuple_selected}
+                ) E ON P.`index` = E.lead_id;
+                """)
 
   rows = cur.fetchall()
   print(rows)
