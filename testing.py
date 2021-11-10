@@ -1,9 +1,13 @@
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text, create_engine
 import requests
+import sqlite3
 import json
 import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text, create_engine
 import sqlite3
+
 
 # try:
 con = sqlite3.connect('test.db')
@@ -23,6 +27,7 @@ for i in range(len(data)):
   #   continue
   #philipjani@yahoo.com
   #214 403 0135
+
 
   values = {
       "FirstName": f_name,
@@ -46,6 +51,7 @@ for i in range(len(data)):
   r = requests.post('https://api.peoplefinderspro.com/contact/enrich', data=values, headers=headers)
   response_body = r.text
   person_data = json.loads(response_body)
+
   first_name = person_data['person']['name']['firstName']
   last_name = person_data['person']['name']['lastName']
   middle_name = person_data['person']['name']['middleName']
@@ -54,6 +60,7 @@ for i in range(len(data)):
   emails = [x['email'] for x in email_data]
   phone_data = person_data['person']['phones']
   mobile_phones = [x['number'] for x in phone_data if x['type'] == 'mobile' and x['isConnected'] == True]
+
 
     # try:
   cur.execute("UPDATE lead SET age = ? WHERE last_name = ? AND (first_name = ? OR first_name = ?)", (age, last_name, middle_name, first_name)) #changed
@@ -76,3 +83,4 @@ for i in range(len(data)):
     #   print("There was an error inserting API data into database.")
 # except:
 #   print("There was an error in fetching lead data from the API.")
+

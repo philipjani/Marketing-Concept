@@ -28,7 +28,7 @@ class Lead(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(200), nullable=False)
     last_name = db.Column(db.String(200), nullable=False)
-    age = db.Column(db.Integer, default=0)
+    age = db.Column(db.Integer, default=0) #just added
     address = db.Column(db.String(200), nullable=False)
     city = db.Column(db.String(200), nullable=False)
     state = db.Column(db.String(200), nullable=False)
@@ -48,6 +48,25 @@ class Lead(db.Model):
 
     def __repr__(self):
         return f'<Lead: {self.id}>'
+
+
+class Phone_Number(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mobile_phone = db.Column(db.String(20), nullable=False)
+    lead_id = db.Column(db.Integer, db.ForeignKey('lead.id'))
+
+    def __repr__(self):
+        return f'<Phone_Number: {self.id}>'
+
+
+class Email(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(20), nullable=False)
+    lead_id = db.Column(db.Integer, db.ForeignKey('lead.id'))
+
+    def __repr__(self):
+        return f'<Email: {self.id}>'
+
 
 class Template(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -72,6 +91,8 @@ class Email(db.Model):
 
     def __repr__(self):
         return f'<Email: {self.id}>'
+
+
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -103,7 +124,6 @@ def leads():
         print(selected)
     try:
         con = sqlite3.connect('test.db')
-
         cur = con.cursor()
         cur.execute("SELECT * FROM lead limit 50;")
         data = cur.fetchall()
@@ -179,6 +199,24 @@ def update(id):
             return 'There was an error editing the template.'
     else:
         return render_template('update.html', template_update=template_update)
+
+@app.route('/webhook', methods=['GET', 'POST'])
+def webhook():
+    if request.method == 'POST':
+        print(request.json)
+        return f'{request.json}', 200
+    else:
+        abort(400)
+
+
+@app.route('/webhook', methods=['GET', 'POST'])
+def webhook():
+    if request.method == 'POST':
+        print(request.json)
+        return f'{request.json}', 200
+    else:
+        abort(400)
+
 
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
