@@ -7,6 +7,7 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text, create_engine
 import sqlite3
+from pprint import pprint
 
 
 # try:
@@ -72,21 +73,80 @@ for row in rows:
 
   l_id = id_
 
-  for phone in mobile_phones:
-    cur.execute("INSERT OR IGNORE INTO phone__number (mobile_phone, lead_id) VALUES (?, ?)", (phone, l_id))
+  # for phone in mobile_phones:
+  #   cur.execute("INSERT OR IGNORE INTO phone__number (mobile_phone, lead_id) VALUES (?, ?)", (phone, l_id))
 
-  for email in emails:
-    cur.execute("INSERT OR IGNORE INTO email (email, lead_id) VALUES (?, ?)", (email, l_id))
-  con.commit()
+  # for email in emails:
+  #   cur.execute("INSERT OR IGNORE INTO email (email, lead_id) VALUES (?, ?)", (email, l_id))
+  # con.commit()
 
-  cur.execute(f"SELECT * FROM phone__number;")
+  cur.execute(f"SELECT * FROM email;")
 
 
-  # cur.execute(f"""SELECT * FROM lead 
-  #                 WHERE `index` IN {tuple_selected};
+  # cur.execute(f"""SELECT * FROM lead L
+  #                 INNER JOIN phone__number P
+  #                 ON L.`index` = P.lead_id
+  #                 WHERE L.`index` IN {tuple_selected};
   #                 """)
+
+
+
+  # cur.execute(f"""SELECT 
+  #                   L.`index`, 
+  #                   L.first_name,
+  #                   L.last_name,
+  #                   L.age,
+  #                   L.address,
+  #                   L.city,
+  #                   L.state,
+  #                   L.zip,
+  #                   L.owner_occupied,
+  #                   L.property_type,
+  #                   L.mls_status,
+  #                   group_concat(P.mobile_phone),
+  #                   group_concat(E.email),
+  #                   L.contacted,
+  #                   L.contact_time,
+  #                   L.template_sent,
+  #                   L.response,
+  #                   L.motivation_level
+  #                  FROM lead L
+  #                 INNER JOIN phone__number P ON L.`index` = P.lead_id
+  #                 INNER JOIN Email E on L.`index` = E.lead_id
+  #                 WHERE L.`index` IN {tuple_selected}
+  #                 """)
+
+
+  # cur.execute(f"""SELECT 
+  #                 L.`index`, 
+  #                 L.first_name,
+  #                 L.last_name,
+  #                 L.age,
+  #                 L.address,
+  #                 L.city,
+  #                 L.state,
+  #                 L.zip,
+  #                 L.owner_occupied,
+  #                 L.property_type,
+  #                 L.mls_status,
+  #                 P.mobile_phone,
+  #                 E.email,
+  #                 L.contacted,
+  #                 L.contact_time,
+  #                 L.template_sent,
+  #                 L.response,
+  #                 L.motivation_level
+  #                 FROM lead L
+  #                 INNER JOIN phone__number P ON L.`index` = P.lead_id
+  #                 INNER JOIN Email E on L.`index` = E.lead_id
+  #               WHERE L.`index` IN {tuple_selected}
+  #               """)
+
+
   rows = cur.fetchall()
   print(rows)
+  print(len(rows))
+
 
 
   break
