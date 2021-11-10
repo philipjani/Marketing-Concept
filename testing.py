@@ -10,23 +10,29 @@ import sqlite3
 
 
 # try:
+test_selected = ['0', '1', '3', '8']
+ints_selected = []
+for id_num in test_selected:
+  ints_selected.append(int(id_num))
+tuple_selected = tuple(ints_selected)
+
 con = sqlite3.connect('test.db')
 cur = con.cursor()
-cur.execute("SELECT * FROM lead WHERE property_type LIKE '%Residential%' AND mls_status LIKE '%FAIL%' LIMIT 10;")
-data = cur.fetchall()
 
-for i in range(len(data)):
-  print(data[i])
-  id_ = data[i][0]
-  f_name = data[i][1]
-  l_name = data[i][2]
-  add_line_one = data[i][4]
-  add_line_two = f'{data[i][5]}, {data[i][6]}'
+# cur.execute(f"SELECT * FROM lead WHERE property_type LIKE '%Residential%' AND mls_status LIKE '%FAIL%' AND `index` IN {tuple_selected} LIMIT 10;")
+cur.execute(f"SELECT * FROM lead WHERE `index` IN {tuple_selected};")
+rows = cur.fetchall()
 
-  # if data[i][11] or data[i][12]:
+for row in rows:
+  # print(row)
+  id_ = row[0]
+  f_name = row[1]
+  l_name = row[2]
+  add_line_one = row[4]
+  add_line_two = f'{row[5]}, {row[6]}'
+
+  # if row[11] or row[12]:
   #   continue
-  #philipjani@yahoo.com
-  #214 403 0135
 
 
   values = {
@@ -48,9 +54,12 @@ for i in range(len(data)):
     'galaxy-search-type': 'DevAPIContactEnrich'
   }
 
-  r = requests.post('https://api.peoplefinderspro.com/contact/enrich', data=values, headers=headers)
-  response_body = r.text
-  person_data = json.loads(response_body)
+  # r = requests.post('https://api.peoplefinderspro.com/contact/enrich', data=values, headers=headers)
+  # response_body = r.text
+  # person_data = json.loads(response_body)
+
+  with open('blob.json') as blob:
+    person_data = json.load(blob)
 
   first_name = person_data['person']['name']['firstName']
   last_name = person_data['person']['name']['lastName']
@@ -59,26 +68,43 @@ for i in range(len(data)):
   email_data = person_data['person']['emails']
   emails = [x['email'] for x in email_data]
   phone_data = person_data['person']['phones']
-  mobile_phones = [x['number'] for x in phone_data if x['type'] == 'mobile' and x['isConnected'] == True]
+  mobile_phones = [x['number'] for x in phone_data if x['type'] == 'mobile' and x['isConnected'] == True and int(x['lastReportedDate'].split('/')[2]) > 2015]
 
+  l_id = id_
+
+  for phone in mobile_phones:
+    cur.execute("INSERT OR IGNORE INTO phone__number (mobile_phone, lead_id) VALUES (?, ?)", (phone, l_id))
+
+  for email in emails:
+    cur.execute("INSERT OR IGNORE INTO email (email, lead_id) VALUES (?, ?)", (email, l_id))
+  con.commit()
+
+  cur.execute(f"SELECT * FROM phone__number;")
+
+
+  # cur.execute(f"""SELECT * FROM lead 
+  #                 WHERE `index` IN {tuple_selected};
+  #                 """)
+  rows = cur.fetchall()
+  print(rows)
+
+
+  break
+  # print(mobile_phones)
+  # print('\n'.join(mobile_phones))
 
     # try:
   cur.execute("UPDATE lead SET age = ? WHERE last_name = ? AND (first_name = ? OR first_name = ?)", (age, last_name, middle_name, first_name)) #changed
 
-  #Create SQLAlchemy connection and query for user that was just updated to get the id
-  engine = create_engine('sqlite:///test.db')
-  t = text("SELECT * from lead WHERE last_name=:last_name AND (first_name=:middle_name OR first_name=:first_name)")
-  connection = engine.connect()
-  results = connection.execute(t, last_name=last_name, middle_name=middle_name, first_name=first_name)
-  l_id = results.fetchone()[0]
-  connection.close()
+  # #Create SQLAlchemy connection and query for user that was just updated to get the id
+  # engine = create_engine('sqlite:///test.db')
+  # t = text("SELECT * from lead WHERE last_name=:last_name AND (first_name=:middle_name OR first_name=:first_name)")
+  # connection = engine.connect()
+  # results = connection.execute(t, last_name=last_name, middle_name=middle_name, first_name=first_name)
+  # l_id = results.fetchone()[0]
+  # connection.close()
 
-  for phone in mobile_phones:
-    cur.execute("INSERT INTO phone__number (mobile_phone, lead_id) VALUES (?, ?)", (phone, l_id))
 
-  for email in emails:
-    cur.execute("INSERT INTO email (email, lead_id) VALUES (?, ?)", (email, l_id))
-  con.commit()
     # except:
     #   print("There was an error inserting API data into database.")
 # except:

@@ -103,10 +103,12 @@ def leads():
     if request.method == 'POST':
         selected = request.form.getlist('select')
         print(selected)
+        
     try:
         con = sqlite3.connect('test.db')
         cur = con.cursor()
-        cur.execute("SELECT * FROM lead limit 50;")
+        # cur.execute("SELECT * FROM lead WHERE property_type LIKE '%Residential%' AND mls_status LIKE '%FAIL%' LIMIT 10;")
+        cur.execute("SELECT * FROM lead limit 10;")
         data = cur.fetchall()
         #https://www.sqlitetutorial.net/sqlite-inner-join/
         mobile_phone = cur.execute("select mobile_phone from phone__number inner join lead on lead.'index' = phone__number.lead_id;").fetchall()
