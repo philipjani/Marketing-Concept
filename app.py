@@ -117,15 +117,20 @@ def index():
     else:
         return render_template('index.html')
 
-@app.route('/leads')
+@app.route('/leads', methods=['POST', 'GET'])
 def leads():
+    if request.method == 'POST':
+        selected = request.form.getlist('select')
+        print(selected)
     try:
         con = sqlite3.connect('test.db')
         cur = con.cursor()
-        cur.execute("SELECT * FROM lead WHERE property_type LIKE '%Residential%' AND mls_status LIKE '%FAIL%' LIMIT 10;")
+        cur.execute("SELECT * FROM lead limit 50;")
         data = cur.fetchall()
+        #https://www.sqlitetutorial.net/sqlite-inner-join/
+        mobile_phone = cur.execute("select mobile_phone from phone__number inner join lead on lead.'index' = phone__number.lead_id;").fetchall()
         con.close()
-        return render_template('leads.html', data=data)
+        return render_template('leads.html', data=data, mobile_phone=mobile_phone)
     except:
         return 'There was an issue retrieving your leads.'
 
@@ -139,7 +144,6 @@ def filter(category, query_string):
     data = cur.fetchall()
     return data
 
-
 #Added by Dylan
 @app.route('/updated_filter', methods = ["POST", "GET"])
 def updated_filter():
@@ -150,7 +154,6 @@ def updated_filter():
 
         #change below to render_template
         return render_template('leads.html', data=results)
-
 
 @app.route('/templates', methods = ["POST", "GET"])
 def templates():
