@@ -14,6 +14,8 @@ UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static/files')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
+ROWS_PER_PAGE = 20
+
 # https://stackoverflow.com/questions/17768940/target-database-is-not-up-to-date/17776558
 # For data base migration issues: try running below commands in powershell terminal
 # $ flask db init
@@ -32,7 +34,7 @@ class Lead(db.Model):
     address = db.Column(db.String(200), nullable=False)
     city = db.Column(db.String(200), nullable=False)
     state = db.Column(db.String(200), nullable=False)
-    zip_code = db.Column(db.String(200), nullable=False)
+    zip = db.Column(db.String(200), nullable=False)
     owner_occupied = db.Column(db.String, nullable=False)
     property_type = db.Column(db.String, nullable=False)
     mls_status = db.Column(db.String, nullable=False)
@@ -87,6 +89,8 @@ def index():
             #https://stackoverflow.com/questions/41900593/csv-into-sqlite-table-python
             df = pd.read_csv(UPLOAD_FOLDER + '/' + uploaded_file.filename)
             df.columns = df.columns.str.strip()
+            # print(df)
+            df.index.names = ['id']
             con = sqlite3.connect("test.db")
             #https://stackoverflow.com/questions/3548673/how-can-i-replace-or-strip-an-extension-from-a-filename-in-python
             # filename = os.path.splitext(uploaded_file.filename)
@@ -103,17 +107,20 @@ def leads():
     if request.method == 'POST':
         selected = request.form.getlist('select')
         print(selected)
-        
+
     try:
-        con = sqlite3.connect('test.db')
-        cur = con.cursor()
+        page = request.args.get('page', 1, type=int)
+        # con = sqlite3.connect('test.db')
+        # cur = con.cursor()
         # cur.execute("SELECT * FROM lead WHERE property_type LIKE '%Residential%' AND mls_status LIKE '%FAIL%' LIMIT 10;")
-        cur.execute("SELECT * FROM lead limit 10;")
-        data = cur.fetchall()
+        # cur.execute(f"SELECT * FROM lead WHERE id BETWEEN {(page - 1) * ROWS_PER_PAGE} AND {page * ROWS_PER_PAGE - 1};")
+        # leads = cur.fetchall()
+        leads = Lead.query.paginate(page=page, per_page=ROWS_PER_PAGE)
         #https://www.sqlitetutorial.net/sqlite-inner-join/
-        mobile_phone = cur.execute("select mobile_phone from phone__number inner join lead on lead.'index' = phone__number.lead_id;").fetchall()
-        con.close()
-        return render_template('leads.html', data=data, mobile_phone=mobile_phone)
+        # mobile_phone = cur.execute("select mobile_phone from phone__number inner join lead on lead.id = phone__number.lead_id;").fetchall()
+        # con.close()
+        return render_template('leads.html', leads=leads)
+
     except:
         return 'There was an issue retrieving your leads.'
 

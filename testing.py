@@ -9,6 +9,9 @@ from sqlalchemy import text, create_engine
 import sqlite3
 from pprint import pprint
 
+# https://stackoverflow.com/questions/28105465/joining-multiple-tables-with-one-to-many-relationship
+# https://stackoverflow.com/questions/11003347/multiple-table-joins-with-one-to-many-relationships
+# try merge w/ pandas instead
 
 # try:
 test_selected = ['0', '1', '3', '8']
@@ -20,8 +23,8 @@ tuple_selected = tuple(ints_selected)
 con = sqlite3.connect('test.db')
 cur = con.cursor()
 
-# cur.execute(f"SELECT * FROM lead WHERE property_type LIKE '%Residential%' AND mls_status LIKE '%FAIL%' AND `index` IN {tuple_selected} LIMIT 10;")
-cur.execute(f"SELECT * FROM lead WHERE `index` IN {tuple_selected};")
+# cur.execute(f"SELECT * FROM lead WHERE property_type LIKE '%Residential%' AND mls_status LIKE '%FAIL%' AND id IN {tuple_selected} LIMIT 10;")
+cur.execute(f"SELECT * FROM lead WHERE id IN {tuple_selected};")
 rows = cur.fetchall()
 
 for row in rows:
@@ -85,14 +88,14 @@ for row in rows:
 
   # cur.execute(f"""SELECT * FROM lead L
   #                 INNER JOIN phone__number P
-  #                 ON L.`index` = P.lead_id
-  #                 WHERE L.`index` IN {tuple_selected};
+  #                 ON L.id = P.lead_id
+  #                 WHERE L.id IN {tuple_selected};
   #                 """)
 
 
 
   # cur.execute(f"""SELECT
-  #                   L.`index`, 
+  #                   L.id, 
   #                   L.first_name,
   #                   L.last_name,
   #                   L.age,
@@ -111,14 +114,14 @@ for row in rows:
   #                   L.response,
   #                   L.motivation_level
   #                  FROM lead L
-  #                 INNER JOIN phone__number P ON L.`index` = P.lead_id
-  #                 INNER JOIN Email E on L.`index` = E.lead_id
-  #                 WHERE L.`index` IN {tuple_selected}
+  #                 INNER JOIN phone__number P ON L.id = P.lead_id
+  #                 INNER JOIN Email E on L.id = E.lead_id
+  #                 WHERE L.id IN {tuple_selected}
   #                 """)
 
 
   # cur.execute(f"""SELECT DISTINCT
-  #                 L.`index`, 
+  #                 L.id, 
   #                 L.first_name,
   #                 L.last_name,
   #                 L.age,
@@ -137,14 +140,14 @@ for row in rows:
   #                 L.response,
   #                 L.motivation_level
   #                 FROM lead L
-  #                 INNER JOIN phone__number P ON L.`index` = P.lead_id
-  #                 INNER JOIN Email E on L.`index` = E.lead_id
-  #               WHERE L.`index` IN {tuple_selected}
+  #                 INNER JOIN phone__number P ON L.id = P.lead_id
+  #                 INNER JOIN Email E on L.id = E.lead_id
+  #               WHERE L.id IN {tuple_selected}
   #               """)
 
 
   # cur.execute(f"""SELECT group_concat(mobile_phone) FROM (SELECT DISTINCT
-  #                 L.`index`, 
+  #                 L.id, 
   #                 L.first_name,
   #                 L.last_name,
   #                 L.age,
@@ -163,22 +166,22 @@ for row in rows:
   #                 L.response,
   #                 L.motivation_level
   #                 FROM lead L
-  #                 INNER JOIN phone__number P ON L.`index` = P.lead_id
-  #                 INNER JOIN Email E on L.`index` = E.lead_id
-  #               WHERE L.`index` IN {tuple_selected})
+  #                 INNER JOIN phone__number P ON L.id = P.lead_id
+  #                 INNER JOIN Email E on L.id = E.lead_id
+  #               WHERE L.id IN {tuple_selected})
   #               """)
 
 
   # cur.execute(f"""SELECT  group_concat(S.mobile_phone)
   #           FROM lead L INNER JOIN (SELECT DISTINCT P.mobile_phone
   #                 FROM lead L
-  #                 INNER JOIN phone__number P ON L.`index` = P.lead_id
+  #                 INNER JOIN phone__number P ON L.id = P.lead_id
   #               ) S
-  #               WHERE L.`index` IN {tuple_selected};
+  #               WHERE L.id IN {tuple_selected};
   #               """)
 
   cur.execute(f"""SELECT 
-                  P.`index`, 
+                  P.id, 
                   P.first_name,
                   P.last_name,
                   P.age,
@@ -197,7 +200,7 @@ for row in rows:
                   P.response,
                   P.motivation_level
                   FROM (SELECT DISTINCT
-                    L.`index`, 
+                    L.id, 
                     L.first_name,
                     L.last_name,
                     L.age,
@@ -215,20 +218,21 @@ for row in rows:
                     L.response,
                     L.motivation_level
                   FROM lead L
-                  INNER JOIN phone__number P ON L.`index` = P.lead_id
-                  WHERE L.`index` IN {tuple_selected}
+                  INNER JOIN phone__number P ON L.id = P.lead_id
+                  WHERE L.id IN {tuple_selected}
                 ) P
                   INNER JOIN (SELECT DISTINCT E.lead_id, E.email
                   FROM lead L
-                  INNER JOIN Email E ON L.`index` = E.lead_id
-                  WHERE L.`index` IN {tuple_selected}
+                  INNER JOIN Email E ON L.id = E.lead_id
+                  WHERE L.id IN {tuple_selected}
                 ) E;
                 """)
-  
+
+
   cur.execute(f"""SELECT 
                   group_concat(P.mobile_phone)
                   FROM (SELECT DISTINCT
-                    L.`index`, 
+                    L.id, 
                     L.first_name,
                     L.last_name,
                     L.age,
@@ -246,14 +250,14 @@ for row in rows:
                     L.response,
                     L.motivation_level
                   FROM lead L
-                  INNER JOIN phone__number P ON L.`index` = P.lead_id
-                  WHERE L.`index` IN {tuple_selected}
+                  INNER JOIN phone__number P ON L.id = P.lead_id
+                  WHERE L.id IN {tuple_selected}
                 ) P
                   INNER JOIN (SELECT DISTINCT E.lead_id, E.email
                   FROM lead L
-                  INNER JOIN Email E ON L.`index` = E.lead_id
-                  WHERE L.`index` IN {tuple_selected}
-                ) E ON P.`index` = E.lead_id;
+                  INNER JOIN Email E ON L.id = E.lead_id
+                  WHERE L.id IN {tuple_selected}
+                ) E ON P.id = E.lead_id;
                 """)
 
   rows = cur.fetchall()

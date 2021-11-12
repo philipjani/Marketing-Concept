@@ -32,6 +32,9 @@
 </form>
 
 
+    
+<span style="float: right;"><input type="checkbox"  id='updateme' onClick="toggle(this)"/>Update All</span><br/>
+
 <div class="table-responsive">
     <form action="" method='POST'>
         <table class="table table-bordered" style="border-radius: 4px; overflow: hidden;">
@@ -56,27 +59,27 @@
                 <th>Motivation Level</th>
                 <th>Select</th>
             </tr>
-            {%  for item in data %}
+            {%  for lead in leads.items %}
             <tr>
-                <!-- <td>{{item[0]}}</td> -->
-                <td>{{item[1]}}</td>
-                <td>{{item[2]}}</td>
-                <td>{{item[3]}}</td>
-                <td>{{item[4]}}</td>
-                <td>{{item[5]}}</td>
-                <td>{{item[6]}}</td>
-                <td>{{item[7]}}</td>
-                <td>{{item[8]}}</td>
-                <td>{{item[9]}}</td>
-                <td>{{item[10]}}</td>
-                <td>{{item[11]}}</td>
-                <td>{{item[12]}}</td>
-                <td>{{item[13]}}</td>
-                <td>{{item[14]}}</td>
-                <td>{{item[15]}}</td>
-                <td>{{item[16]}}</td>
-                <td>{{item[17]}}</td>
-                <td><input type="checkbox" id="select" name="select" value={{item[0]}}>{{item[0]}}</td>
+                <!-- <td>{{lead.id}}</td> -->
+                <td>{{lead.first_name}}</td>
+                <td>{{lead.last_name}}</td>
+                <td>{{lead.age}}</td>
+                <td>{{lead.address}}</td>
+                <td>{{lead.city}}</td>
+                <td>{{lead.state}}</td>
+                <td>{{lead.zip_code}}</td>
+                <td>{{lead.owner_occupied}}</td>
+                <td>{{lead.property_type}}</td>
+                <td>{{lead.mls_status}}</td>
+                <td>{{lead.phone_number}}</td>
+                <td>{{lead.email}}</td>
+                <td>{{lead.contacted}}</td>
+                <td>{{lead.contact_time}}</td>
+                <td>{{lead.template_sent}}</td>
+                <td>{{lead.response}}</td>
+                <td>{{lead.motivation_level}}</td>
+                <td><input type="checkbox" id="select" name="select" value={{lead.id}}>{{lead.id}}</td>
             </tr>
             {% endfor %}
         </table>
@@ -84,4 +87,49 @@
     </form>
 </div>
 
+<!-- Pagination Links-->
+<div class="text-right">
+    <a href="{{ url_for('leads', page=leads.prev_num) }}"
+       class="btn btn-outline-dark 
+       {% if leads.page == 1 %}disabled{% endif %}">
+        &laquo;
+    </a>
+<!-- Loop through the number of pages to display a link for each-->
+    {% for page_num in leads.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+{% if page_num %}
+<!-- Check for the active page and set the link to "Active"-->
+            {% if leads.page == page_num %}
+            <a href="{{ url_for('leads', page=page_num) }}"
+               class="btn btn-dark">
+                {{ page_num }}
+            </a>
+            {% else %}
+            <a href="{{ url_for('leads', page=page_num) }}"
+               class="btn btn-outline-dark">
+                {{ page_num }}
+            </a>
+            {% endif %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+    <a href="{{ url_for('leads', page=leads.next_num) }}"
+       class="btn btn-outline-dark 
+       {% if leads.page == leads.pages %}disabled{% endif %}">
+        &raquo;
+    </a>
+</div>
+<p class="text-right mt-3">
+   Showing page {{ leads.page }} of {{ leads.pages }}
+</p>
+
+<script >
+    document.getElementById('updateme').onclick = function() {
+        var checkboxes = document.getElementsByName('select');
+        for (var checkbox of checkboxes) {
+            checkbox.checked = this.checked;
+        }
+    }
+</script>
 {% endblock %}
+
