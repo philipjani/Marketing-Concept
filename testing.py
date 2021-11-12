@@ -1,17 +1,17 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text, create_engine
+# from sqlalchemy import text, create_engine
 import requests
 import sqlite3
 import json
 import os
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text, create_engine
-import sqlite3
 from pprint import pprint
 
+# try sqlalchemy to join tables
 # https://stackoverflow.com/questions/28105465/joining-multiple-tables-with-one-to-many-relationship
 # https://stackoverflow.com/questions/11003347/multiple-table-joins-with-one-to-many-relationships
 # try merge w/ pandas instead
+# use python!
+# https://stackoverflow.com/questions/23025902/sqlalchemy-one-to-many-relationship-join
 
 # try:
 test_selected = ['0', '1', '3', '8']
