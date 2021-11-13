@@ -38,15 +38,16 @@ class Lead(db.Model):
     owner_occupied = db.Column(db.String, nullable=False)
     property_type = db.Column(db.String, nullable=False)
     mls_status = db.Column(db.String, nullable=False)
-    phone_number = db.Column(db.String(200), nullable=False)
-    email = db.Column(db.String(200), nullable=False)
+    # phone_number = db.Column(db.String(200), nullable=False)
+    # email = db.Column(db.String(200), nullable=False)
+    mobile_phones = db.relationship('Phone_Number', backref='lead')
+    emails = db.relationship('Email', backref='lead')
     contacted = db.Column(db.Integer, default=0)
     contact_time = db.Column(db.DateTime)
     template_sent = db.Column(db.String(200), nullable=False)
-    response = db.Column(db.String(200), nullable=False)
+    response = db.Column(db.String(200))
     motivation_level = db.Column(db.String(200), nullable=False)
-    mobile_phones = db.relationship('Phone_Number', backref='lead')
-    emails = db.relationship('Email', backref='lead')
+
 
     def __repr__(self):
         return f'<Lead: {self.id}>'
@@ -55,7 +56,13 @@ class Lead(db.Model):
 class Phone_Number(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     mobile_phone = db.Column(db.String(20), nullable=False)
+    contacted = db.Column(db.Integer, default=0)
+    contact_time = db.Column(db.DateTime)
+    response = db.Column(db.String(200))
     lead_id = db.Column(db.Integer, db.ForeignKey('lead.id'))
+    __table_args__ = (
+        db.UniqueConstraint('lead_id', 'mobile_phone', name='unique_phone_numbers'),
+    )
 
     def __repr__(self):
         return f'<Phone_Number: {self.id}>'
@@ -63,8 +70,14 @@ class Phone_Number(db.Model):
 
 class Email(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(20), nullable=False)
+    email_address = db.Column(db.String(20), nullable=False)
+    contacted = db.Column(db.Integer, default=0)
+    contact_time = db.Column(db.DateTime)
+    response = db.Column(db.String(200))
     lead_id = db.Column(db.Integer, db.ForeignKey('lead.id'))
+    __table_args__ = (
+        db.UniqueConstraint('lead_id', 'email_address', name='unique_emails'),
+    )
 
     def __repr__(self):
         return f'<Email: {self.id}>'
@@ -108,21 +121,22 @@ def leads():
         selected = request.form.getlist('select')
         print(selected)
 
-    try:
-        page = request.args.get('page', 1, type=int)
-        # con = sqlite3.connect('test.db')
-        # cur = con.cursor()
-        # cur.execute("SELECT * FROM lead WHERE property_type LIKE '%Residential%' AND mls_status LIKE '%FAIL%' LIMIT 10;")
-        # cur.execute(f"SELECT * FROM lead WHERE id BETWEEN {(page - 1) * ROWS_PER_PAGE} AND {page * ROWS_PER_PAGE - 1};")
-        # leads = cur.fetchall()
-        leads = Lead.query.paginate(page=page, per_page=ROWS_PER_PAGE)
-        #https://www.sqlitetutorial.net/sqlite-inner-join/
-        # mobile_phone = cur.execute("select mobile_phone from phone__number inner join lead on lead.id = phone__number.lead_id;").fetchall()
-        # con.close()
-        return render_template('leads.html', leads=leads)
+    # try:
+    page = request.args.get('page', 1, type=int)
+    # con = sqlite3.connect('test.db')
+    # cur = con.cursor()
+    # cur.execute("SELECT * FROM lead WHERE property_type LIKE '%Residential%' AND mls_status LIKE '%FAIL%' LIMIT 10;")
+    # cur.execute(f"SELECT * FROM lead WHERE id BETWEEN {(page - 1) * ROWS_PER_PAGE} AND {page * ROWS_PER_PAGE - 1};")
+    # leads = cur.fetchall()
+    leads = db.session.query(Lead).paginate(page=page, per_page=ROWS_PER_PAGE)
 
-    except:
-        return 'There was an issue retrieving your leads.'
+    #https://www.sqlitetutorial.net/sqlite-inner-join/
+    # mobile_phone = cur.execute("select mobile_phone from phone__number inner join lead on lead.id = phone__number.lead_id;").fetchall()
+    # con.close()
+    return render_template('leads.html', leads=leads)
+
+    # except:
+    #     return 'There was an issue retrieving your leads.'
 
 #Added by Dylan
 def filter(category, query_string):
