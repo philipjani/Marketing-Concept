@@ -72,8 +72,20 @@
                 <td>{{lead.owner_occupied}}</td>
                 <td>{{lead.property_type}}</td>
                 <td>{{lead.mls_status}}</td>
-                <td>{{lead.phone_number}}</td>
-                <td>{{lead.email}}</td>
+                <td>
+                    {% for mobile_phone in lead.mobile_phones %}
+                        {{mobile_phone.mobile_phone
+                            .replace(" ", "")
+                            .replace("-", "")
+                            .replace("(", "")
+                            .replace(")", "")}}<br>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for email in lead.emails %}
+                        {{email.email_address}}<br>
+                    {% endfor %}
+                </td>
                 <td>{{lead.contacted}}</td>
                 <td>{{lead.contact_time}}</td>
                 <td>{{lead.template_sent}}</td>
