@@ -130,7 +130,7 @@ def filter(category, query_string):
 
     cur = con.cursor()
     statement = (f"SELECT * FROM lead WHERE {category} LIKE '%{query_string}%' LIMIT 10;")
-    cur.execute(statement)
+    cur.execute(str(statement))
     data = cur.fetchall()
     return data
 
@@ -143,7 +143,7 @@ def updated_filter():
         results = filter(column, data)
 
         #change below to render_template
-        return render_template('leads.html', data=results)
+        return render_template('leads.html', leads=results)
 
 @app.route('/templates', methods = ["POST", "GET"])
 def templates():

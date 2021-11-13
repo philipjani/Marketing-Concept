@@ -17,7 +17,7 @@
                 <select name="comp_select" class="selectpicker form-control">
                     <option>last_name</option>
                     <option>city</option>
-                    <option>zip_code</option>
+                    <option>zip</option>
                     <option>owner_occupied</option>
                     <option>property_type</option>
                     <option>mls_status</option>
@@ -27,13 +27,13 @@
             <label for="exampleFormControlInput1">Enter Filter Query</label>
             <input name="info" class="form-control" id="exampleFormControlInput1" placeholder="name/city/zip">
         </div>
-        <button type="submit" class="btn btn-primary">Go</button>
+        <button type="submit" class="btn btn-secondary" style="margin-top: 10px;">Go</button>
     </div>
 </form>
 
 
     
-<span style="float: right;"><input type="checkbox"  id='updateme' onClick="toggle(this)"/>Update All</span><br/>
+<span style="float: right;">Select All  <input class="form-check-input" type="checkbox"  id='updateme' onClick="toggle(this)"/></span><br/>
 
 <div class="table-responsive">
     <form action="" method='POST'>
@@ -68,7 +68,7 @@
                 <td>{{lead.address}}</td>
                 <td>{{lead.city}}</td>
                 <td>{{lead.state}}</td>
-                <td>{{lead.zip_code}}</td>
+                <td>{{lead.zip}}</td>
                 <td>{{lead.owner_occupied}}</td>
                 <td>{{lead.property_type}}</td>
                 <td>{{lead.mls_status}}</td>
@@ -79,16 +79,17 @@
                 <td>{{lead.template_sent}}</td>
                 <td>{{lead.response}}</td>
                 <td>{{lead.motivation_level}}</td>
-                <td><input type="checkbox" id="select" name="select" value={{lead.id}}>{{lead.id}}</td>
+                <td><input class="form-check-input" type="checkbox" id="select" name="select" value={{lead.id}} style="margin-right: 5px;"></td>
+                <!-- {{lead.id}} -->
             </tr>
             {% endfor %}
         </table>
-        <button type='submit'>get phone numbers and emails</button>
+        <button type='submit' class="btn btn-secondary" style="margin-bottom: 10px;">Skiptrace Leads</button>
     </form>
 </div>
 
 <!-- Pagination Links-->
-<div class="text-right">
+<div class="text-right" style="float: right; margin-top: 11px;">
     <a href="{{ url_for('leads', page=leads.prev_num) }}"
        class="btn btn-outline-dark 
        {% if leads.page == 1 %}disabled{% endif %}">
