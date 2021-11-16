@@ -43,10 +43,7 @@ for lead in leads:
             "addressLine2": f'{lead.city}, {lead.state}'
         }
     }
-    # print(values)
 
-    # if lead.mobile_phones != [] or lead.emails != []:
-    #     continue
 
 #   # https://stackoverflow.com/questions/20777173/add-variable-value-in-a-json-string-in-python/20777249
 #   values = json.dumps(values)

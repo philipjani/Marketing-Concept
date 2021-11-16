@@ -60,11 +60,12 @@
                 <th>Select</th>
             </tr>
             {%  for lead in leads.items %}
+                {% if lead.first_name %}
             <tr>
                 <!-- <td>{{lead.id}}</td> -->
                 <td>{{lead.first_name}}</td>
                 <td>{{lead.last_name}}</td>
-                <td>{{lead.age}}</td>
+                <td>{{lead.age|int}}</td>
                 <td>{{lead.address}}</td>
                 <td>{{lead.city}}</td>
                 <td>{{lead.state}}</td>
@@ -94,6 +95,7 @@
                 <td><input class="form-check-input" type="checkbox" id="select" name="select" value={{lead.id}} style="margin-right: 5px;"></td>
                 <!-- {{lead.id}} -->
             </tr>
+                {% endif %}
             {% endfor %}
         </table>
         <button type='submit' class="btn btn-secondary" style="margin-bottom: 10px;">Skiptrace Leads</button>

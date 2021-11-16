@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+import skiptracing as st
 import sqlite3
 import pandas as pd
 import os
+from pprint import pprint
 
 app = Flask(__name__)
 
@@ -119,8 +121,17 @@ def index():
 def leads():
     if request.method == 'POST':
         selected = request.form.getlist('select')
-        print(selected)
-
+        leads = st.retrieve_selected_leads(db, selected)
+        for lead in leads:
+            # API call does not work without first name
+            if not lead.first_name:
+                continue
+            lead_dict = st.get_lead_dict(lead)
+            # pprint(lead_dict)
+            person_data = st.get_pf_api_data(lead_dict)
+            # pprint(person_data)
+            age, mobile_phones, emails = st.extract_info_from_person_data(person_data)
+            st.update_person_db(db, lead, age, mobile_phones, emails)
     # try:
     page = request.args.get('page', 1, type=int)
     leads = db.session.query(Lead).paginate(page=page, per_page=ROWS_PER_PAGE)

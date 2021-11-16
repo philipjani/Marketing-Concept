@@ -3,63 +3,92 @@ import requests
 import sqlite3
 import json
 import os
+from app import Lead, Phone_Number, Email, Template
 from pprint import pprint
 
-def retrieve_selected_leads():
-    test_selected = ['0', '1', '3', '8']
+
+def convert_lead_ids_to_ints(lead_ids):
     ints_selected = []
-    for id_num in test_selected:
+    for id_num in lead_ids:
         ints_selected.append(int(id_num))
-        tuple_selected = tuple(ints_selected)
-    con = sqlite3.connect('test.db')
-    cur = con.cursor()
-    # cur.execute(f"SELECT * FROM lead WHERE property_type LIKE '%Residential%' AND mls_status LIKE '%FAIL%' AND id IN {tuple_selected} LIMIT 10;")
-    cur.execute(f"SELECT * FROM lead WHERE id IN {tuple_selected};")
-    rows = cur.fetchall()
-    return rows
+    tuple_selected = tuple(ints_selected)
+    return tuple_selected
 
-def contact_pf_api(rows):
-    for row in rows:
 
-        id_ = row[0]
-        f_name = row[1]
-        l_name = row[2]
-        add_line_one = row[4]
-        add_line_two = f'{row[5]}, {row[6]}'
+def retrieve_selected_leads(db, lead_ids):
+    tuple_selected = convert_lead_ids_to_ints(lead_ids)
+    leads = db.session.query(Lead).filter(Lead.id.in_(tuple_selected)).all()
+    return leads
 
-        values = {
-            "FirstName": f_name,
-            "LastName": l_name,
-            "Address": {
-                "addressLine1": add_line_one,
-                "addressLine2": add_line_two
-            }
-            }
 
-        # https://stackoverflow.com/questions/20777173/add-variable-value-in-a-json-string-in-python/20777249
-        values = json.dumps(values)
-        
-        headers = {
-            'Content-Type': 'application/json',
-            'galaxy-ap-name': os.environ.get('PEOPLE_API_NAME'),
-            'galaxy-ap-password': os.environ.get('PEOPLE_API_PASS'),
-            'galaxy-search-type': 'DevAPIContactEnrich'
+def get_lead_dict(lead):
+    lead_dict = {
+        "FirstName": lead.first_name,
+        "LastName": lead.last_name,
+        "Address": {
+            "addressLine1": lead.address,
+            "addressLine2": f'{lead.city}, {lead.state}'
         }
+    }
+    return lead_dict
 
-        r = requests.post('https://api.peoplefinderspro.com/contact/enrich', data=values, headers=headers)
-        response_body = r.text
-        person_data = json.loads(response_body)
 
-        return person_data
+def get_pf_api_data(lead_dict):
+    payload = json.dumps(lead_dict)
+  
+    headers = {
+        'Content-Type': 'application/json',
+        'galaxy-ap-name': os.environ.get('PEOPLE_API_NAME'),
+        'galaxy-ap-password': os.environ.get('PEOPLE_API_PASS'),
+        'galaxy-search-type': 'DevAPIContactEnrich'
+    }
 
-def return_phone_and_email(person_data):
-    first_name = person_data['person']['name']['firstName']
-    last_name = person_data['person']['name']['lastName']
-    middle_name = person_data['person']['name']['middleName']
+    r = requests.post('https://api.peoplefinderspro.com/contact/enrich', data=payload, headers=headers)
+    # response_body = r.text
+    # person_data = json.loads(response_body)
+    person_data = r.json()
+    return person_data
+
+
+def extract_info_from_person_data(person_data):
+    # first_name = person_data['person']['name']['firstName']
+    # last_name = person_data['person']['name']['lastName']
+    # middle_name = person_data['person']['name']['middleName']
     age = person_data['person']['age']
     email_data = person_data['person']['emails']
     emails = [x['email'] for x in email_data]
     phone_data = person_data['person']['phones']
     mobile_phones = [x['number'] for x in phone_data if x['type'] == 'mobile' and x['isConnected'] == True and int(x['lastReportedDate'].split('/')[2]) > 2015]
+    return age, mobile_phones, emails
 
-    return list(mobile_phones, emails)
+
+def update_person_db(db, lead, age, mobile_phones, emails):
+    # Insert all phone numbers of lead into phone numbers table
+    for phone in mobile_phones:
+        stmt = Phone_Number.__table__.insert().prefix_with('OR REPLACE').values(dict(mobile_phone=phone, lead_id=lead.id))
+        db.session.execute(stmt)
+  
+    # Insert all email of lead into emails table
+    for email in emails:
+        stmt = Email.__table__.insert().prefix_with('OR REPLACE').values(dict(email_address=email, lead_id=lead.id))
+        db.session.execute(stmt)
+
+    # Update age of leads
+    lead.age = age
+
+    try:
+      db.session.commit()
+    
+    except:
+      print("There was an error inserting API data into database.")
+
+# def contact_pf_api(db, leads):
+#     leads = retrieve_selected_leads(db, lead_ids)
+#     for lead in leads:
+#         lead_dict = get_lead_dict(lead)
+#         person_data = get_pf_api_data(lead_dict)
+#         age, mobile_phones, emails = extract_info_from_person_data(person_data)
+#         update_person_db(db, age, mobile_phones, emails)
+
+    
+
