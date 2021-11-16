@@ -119,12 +119,17 @@ def index():
 
 @app.route('/leads', methods=['POST', 'GET'])
 def leads():
+    # add this
+    # https://stackoverflow.com/questions/18290142/multiple-forms-in-a-single-page-using-flask-and-wtforms
+    # https://stackoverflow.com/questions/58122969/flask-multiple-forms-on-the-same-page
+    # https://stackoverflow.com/questions/53134216/multiple-forms-on-1-page-python-flask
     if request.method == 'POST':
         selected = request.form.getlist('select')
         leads = st.retrieve_selected_leads(db, selected)
         for lead in leads:
-            # API call does not work without first name
-            if not lead.first_name:
+            # API call does not work without first name, OR if already have phone/emails
+            if not lead.first_name or lead.mobile_phones or lead.emails:
+                # print('Skipped!')
                 continue
             lead_dict = st.get_lead_dict(lead)
             # pprint(lead_dict)
@@ -152,9 +157,8 @@ def updated_filter():
         column = request.form.get("comp_select")
         data = request.form.get("info")
         leads = filter(column, data)
-
-        #change below to render_template
         return render_template('leads.html', leads=leads)
+
 
 @app.route('/templates', methods = ["POST", "GET"])
 def templates():
