@@ -123,30 +123,16 @@ def leads():
 
     # try:
     page = request.args.get('page', 1, type=int)
-    # con = sqlite3.connect('test.db')
-    # cur = con.cursor()
-    # cur.execute("SELECT * FROM lead WHERE property_type LIKE '%Residential%' AND mls_status LIKE '%FAIL%' LIMIT 10;")
-    # cur.execute(f"SELECT * FROM lead WHERE id BETWEEN {(page - 1) * ROWS_PER_PAGE} AND {page * ROWS_PER_PAGE - 1};")
-    # leads = cur.fetchall()
     leads = db.session.query(Lead).paginate(page=page, per_page=ROWS_PER_PAGE)
-
-    #https://www.sqlitetutorial.net/sqlite-inner-join/
-    # mobile_phone = cur.execute("select mobile_phone from phone__number inner join lead on lead.id = phone__number.lead_id;").fetchall()
-    # con.close()
     return render_template('leads.html', leads=leads)
-
     # except:
     #     return 'There was an issue retrieving your leads.'
 
 #Added by Dylan
 def filter(category, query_string):
-    con = sqlite3.connect('test.db')
-
-    cur = con.cursor()
-    statement = (f"SELECT * FROM lead WHERE {category} LIKE '%{query_string}%' LIMIT 10;")
-    cur.execute(str(statement))
-    data = cur.fetchall()
-    return data
+    page = request.args.get('page', 1, type=int)
+    leads = db.session.query(Lead).filter(getattr(Lead, category).like(f'%{query_string}%')).paginate(page=page, per_page=ROWS_PER_PAGE)
+    return leads
 
 #Added by Dylan
 @app.route('/updated_filter', methods = ["POST", "GET"])
@@ -154,10 +140,10 @@ def updated_filter():
     if request.method == 'POST':
         column = request.form.get("comp_select")
         data = request.form.get("info")
-        results = filter(column, data)
+        leads = filter(column, data)
 
         #change below to render_template
-        return render_template('leads.html', leads=results)
+        return render_template('leads.html', leads=leads)
 
 @app.route('/templates', methods = ["POST", "GET"])
 def templates():

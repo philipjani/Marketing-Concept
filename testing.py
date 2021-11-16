@@ -74,239 +74,37 @@ for lead in leads:
     phone_data = person_data['person']['phones']
     mobile_phones = [x['number'] for x in phone_data if x['type'] == 'mobile' and x['isConnected'] == True and int(x['lastReportedDate'].split('/')[2]) > 2015]
 
-
+    # Insert all phone numbers of lead into phone numbers table
     for phone in mobile_phones:
-        # db.session.add(Phone_Number(mobile_phone=phone, lead_id=lead.id))
-        Phone_Number.__table__.insert().prefix_with(' IGNORE').values(dict(mobile_phone=phone, lead_id=lead.id))
-    #     # cur.execute("INSERT OR IGNORE INTO phone__number (mobile_phone, lead_id) VALUES (?, ?)", (phone, l_id))
+        stmt = Phone_Number.__table__.insert().prefix_with('OR IGNORE').values(dict(mobile_phone=phone, lead_id=lead.id))
+        db.session.execute(stmt)
+  
+    # Insert all email of lead into emails table
+    for email in emails:
+        stmt = Email.__table__.insert().prefix_with('OR IGNORE').values(dict(email_address=email, lead_id=lead.id))
+        db.session.execute(stmt)
+
+    # Update age of leads
+    lead.age = age
+
+    try:
+      db.session.commit()
     
+    except:
+      print("There was an error inserting API data into database.")
+
+    # numbers = db.session.query(Phone_Number).all()
+    # print(numbers, 'hi')
+    # for number in numbers:
+    #     print(number.mobile_phone, number.lead_id)
+
+    # emails = db.session.query(Email).all()
     # print(emails)
-    for email in emails:
-        stuff = dict(email=email, lead_id=lead.id)
-        # print(stuff)
-        Email.__table__.insert().prefix_with(' IGNORE').values(dict(email=email, lead_id=lead.id))
-    #     cur.execute("INSERT OR IGNORE INTO email (email, lead_id) VALUES (?, ?)", (email, l_id))
+    # for email in emails:
+    #     print(email.email_address, email.lead_id)
 
-    db.session.commit()
-    # # con.commit()
+    # break
 
-    numbers = db.session.query(Phone_Number).all()
-    print(numbers, 'hi')
-    for number in numbers:
-        print(number.mobile_phone, number.lead_id)
-
-    emails = db.session.query(Email).all()
-    print(emails)
-    for email in emails:
-        print(email.email_address, email.lead_id)
-
-    # con = sqlite3.connect('test.db')
-    # cur = con.cursor()
-    # cur.execute(f"SELECT * FROM email;")
-    # rows = cur.fetchall()
-    # print(rows)
-    # print(len(rows))
-    break
-
-
-#   # cur.execute(f"""SELECT * FROM lead L
-#   #                 INNER JOIN phone__number P
-#   #                 ON L.id = P.lead_id
-#   #                 WHERE L.id IN {tuple_selected};
-#   #                 """)
-
-
-
-#   # cur.execute(f"""SELECT
-#   #                   L.id, 
-#   #                   L.first_name,
-#   #                   L.last_name,
-#   #                   L.age,
-#   #                   L.address,
-#   #                   L.city,
-#   #                   L.state,
-#   #                   L.zip,
-#   #                   L.owner_occupied,
-#   #                   L.property_type,
-#   #                   L.mls_status,
-#   #                   group_concat(P.mobile_phone),
-#   #                   group_concat(E.email),
-#   #                   L.contacted,
-#   #                   L.contact_time,
-#   #                   L.template_sent,
-#   #                   L.response,
-#   #                   L.motivation_level
-#   #                  FROM lead L
-#   #                 INNER JOIN phone__number P ON L.id = P.lead_id
-#   #                 INNER JOIN Email E on L.id = E.lead_id
-#   #                 WHERE L.id IN {tuple_selected}
-#   #                 """)
-
-
-#   # cur.execute(f"""SELECT DISTINCT
-#   #                 L.id, 
-#   #                 L.first_name,
-#   #                 L.last_name,
-#   #                 L.age,
-#   #                 L.address,
-#   #                 L.city,
-#   #                 L.state,
-#   #                 L.zip,
-#   #                 L.owner_occupied,
-#   #                 L.property_type,
-#   #                 L.mls_status,
-#   #                 P.mobile_phone,
-#   #                 E.email,
-#   #                 L.contacted,
-#   #                 L.contact_time,
-#   #                 L.template_sent,
-#   #                 L.response,
-#   #                 L.motivation_level
-#   #                 FROM lead L
-#   #                 INNER JOIN phone__number P ON L.id = P.lead_id
-#   #                 INNER JOIN Email E on L.id = E.lead_id
-#   #               WHERE L.id IN {tuple_selected}
-#   #               """)
-
-
-#   # cur.execute(f"""SELECT group_concat(mobile_phone) FROM (SELECT DISTINCT
-#   #                 L.id, 
-#   #                 L.first_name,
-#   #                 L.last_name,
-#   #                 L.age,
-#   #                 L.address,
-#   #                 L.city,
-#   #                 L.state,
-#   #                 L.zip,
-#   #                 L.owner_occupied,
-#   #                 L.property_type,
-#   #                 L.mls_status,
-#   #                 P.mobile_phone,
-#   #                 E.email,
-#   #                 L.contacted,
-#   #                 L.contact_time,
-#   #                 L.template_sent,
-#   #                 L.response,
-#   #                 L.motivation_level
-#   #                 FROM lead L
-#   #                 INNER JOIN phone__number P ON L.id = P.lead_id
-#   #                 INNER JOIN Email E on L.id = E.lead_id
-#   #               WHERE L.id IN {tuple_selected})
-#   #               """)
-
-
-#   # cur.execute(f"""SELECT  group_concat(S.mobile_phone)
-#   #           FROM lead L INNER JOIN (SELECT DISTINCT P.mobile_phone
-#   #                 FROM lead L
-#   #                 INNER JOIN phone__number P ON L.id = P.lead_id
-#   #               ) S
-#   #               WHERE L.id IN {tuple_selected};
-#   #               """)
-
-#   # cur.execute(f"""SELECT 
-#   #                 P.id, 
-#   #                 P.first_name,
-#   #                 P.last_name,
-#   #                 P.age,
-#   #                 P.address,
-#   #                 P.city,
-#   #                 P.state,
-#   #                 P.zip,
-#   #                 P.owner_occupied,
-#   #                 P.property_type,
-#   #                 P.mls_status,
-#   #                 group_concat(P.mobile_phone),
-#   #                 group_concat(E.email),
-#   #                 P.contacted,
-#   #                 P.contact_time,
-#   #                 P.template_sent,
-#   #                 P.response,
-#   #                 P.motivation_level
-#   #                 FROM (SELECT DISTINCT
-#   #                   L.id, 
-#   #                   L.first_name,
-#   #                   L.last_name,
-#   #                   L.age,
-#   #                   L.address,
-#   #                   L.city,
-#   #                   L.state,
-#   #                   L.zip,
-#   #                   L.owner_occupied,
-#   #                   L.property_type,
-#   #                   L.mls_status,
-#   #                   P.mobile_phone,
-#   #                   L.contacted,
-#   #                   L.contact_time,
-#   #                   L.template_sent,
-#   #                   L.response,
-#   #                   L.motivation_level
-#   #                 FROM lead L
-#   #                 INNER JOIN phone__number P ON L.id = P.lead_id
-#   #                 WHERE L.id IN {tuple_selected}
-#   #               ) P
-#   #                 INNER JOIN (SELECT DISTINCT E.lead_id, E.email
-#   #                 FROM lead L
-#   #                 INNER JOIN Email E ON L.id = E.lead_id
-#   #                 WHERE L.id IN {tuple_selected}
-#   #               ) E;
-#   #               """)
-
-
-#   # cur.execute(f"""SELECT 
-#   #                 group_concat(P.mobile_phone)
-#   #                 FROM (SELECT DISTINCT
-#   #                   L.id, 
-#   #                   L.first_name,
-#   #                   L.last_name,
-#   #                   L.age,
-#   #                   L.address,
-#   #                   L.city,
-#   #                   L.state,
-#   #                   L.zip,
-#   #                   L.owner_occupied,
-#   #                   L.property_type,
-#   #                   L.mls_status,
-#   #                   P.mobile_phone,
-#   #                   L.contacted,
-#   #                   L.contact_time,
-#   #                   L.template_sent,
-#   #                   L.response,
-#   #                   L.motivation_level
-#   #                 FROM lead L
-#   #                 INNER JOIN phone__number P ON L.id = P.lead_id
-#   #                 WHERE L.id IN {tuple_selected}
-#   #               ) P
-#   #                 INNER JOIN (SELECT DISTINCT E.lead_id, E.email
-#   #                 FROM lead L
-#   #                 INNER JOIN Email E ON L.id = E.lead_id
-#   #                 WHERE L.id IN {tuple_selected}
-#   #               ) E ON P.id = E.lead_id;
-#   #               """)
-
-#   rows = cur.fetchall()
-#   print(rows)
-#   print(len(rows))
-
-
-
-#   break
-#   # print(mobile_phones)
-#   # print('\n'.join(mobile_phones))
-
-#     # try:
-#   cur.execute("UPDATE lead SET age = ? WHERE last_name = ? AND (first_name = ? OR first_name = ?)", (age, last_name, middle_name, first_name)) #changed
-
-#   # #Create SQLAlchemy connection and query for user that was just updated to get the id
-#   # engine = create_engine('sqlite:///test.db')
-#   # t = text("SELECT * from lead WHERE last_name=:last_name AND (first_name=:middle_name OR first_name=:first_name)")
-#   # connection = engine.connect()
-#   # results = connection.execute(t, last_name=last_name, middle_name=middle_name, first_name=first_name)
-#   # l_id = results.fetchone()[0]
-#   # connection.close()
-
-
-#     # except:
-#     #   print("There was an error inserting API data into database.")
-# # except:
-# #   print("There was an error in fetching lead data from the API.")
+# except:
+#   print("There was an error in fetching lead data from the API.")
 
