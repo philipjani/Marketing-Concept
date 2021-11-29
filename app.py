@@ -56,11 +56,12 @@ class Lead(db.Model):
 
 
 class Phone_Number(db.Model):
+    __tablename__ = 'phone_number'
     id = db.Column(db.Integer, primary_key=True)
     mobile_phone = db.Column(db.String(20), nullable=False)
     contacted = db.Column(db.Integer, default=0)
     contact_time = db.Column(db.DateTime)
-    response = db.Column(db.String(200))
+    response = db.relationship('TextReply', backref='phone_number')
     lead_id = db.Column(db.Integer, db.ForeignKey('lead.id'))
     __table_args__ = (
         db.UniqueConstraint('lead_id', 'mobile_phone', name='unique_phone_numbers'),
@@ -68,6 +69,16 @@ class Phone_Number(db.Model):
 
     def __repr__(self):
         return f'<Phone_Number: {self.id}>'
+
+
+class TextReply(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    message = db.Column(db.String(200), nullable=False)
+    contact_time = db.Column(db.DateTime)
+    phone_id = db.Column(db.Integer, db.ForeignKey('phone_number.id'))
+
+    def __repr__(self):
+        return f'<TextReply: {self.id}>'
 
 
 class Email(db.Model):
@@ -83,6 +94,16 @@ class Email(db.Model):
 
     def __repr__(self):
         return f'<Email: {self.id}>'
+
+
+class EmailReply(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    message = db.Column(db.String(200), nullable=False)
+    contact_time = db.Column(db.DateTime)
+    email_id = db.Column(db.Integer, db.ForeignKey('email.id'))
+
+    def __repr__(self):
+        return f'<EmailReply: {self.id}>'
 
 
 class Template(db.Model):
@@ -205,10 +226,13 @@ def update(id):
     else:
         return render_template('update.html', template_update=template_update)
 
-@app.route('/webhook', methods=['GET', 'POST'])
+@app.route('/textreply', methods=['GET', 'POST'])
 def webhook():
     if request.method == 'POST':
-        print(request.json)
+        reply = request.json
+        message = reply['text']
+        number = reply['fromNumber']
+
         return f'{request.json}', 200
     else:
         abort(400)

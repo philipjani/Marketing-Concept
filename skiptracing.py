@@ -89,6 +89,3 @@ def update_person_db(db, lead, age, mobile_phones, emails):
 #         person_data = get_pf_api_data(lead_dict)
 #         age, mobile_phones, emails = extract_info_from_person_data(person_data)
 #         update_person_db(db, age, mobile_phones, emails)
-
-    
-
