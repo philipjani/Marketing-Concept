@@ -1,4 +1,6 @@
 first_name,last_name,age,address,city,state,zip,owner_occupied,property_type,mls_status,phone_number,email,contacted,contact_time,template_sent,response,motivation_level
+Jason,M,,777 Your moms house,Reading,PA,19601,No,Residential (General) (Single),FAIL,,,,,,,
+Philip,Jani,,123 Main St,Reading,PA,19601,No,Residential (General) (Single),FAIL,,,,,,,
 Steven,Gill,,153 N Front St,Reading,PA,19601,No,Residential (General) (Single),FAIL,,,,,,,
 ,Addj Properties 1 L P,,355 N 2nd St,Reading,PA,19601,No,Residential (General) (Single),,,,,,,,
 Stanley,Michelot,,959 Church St,Reading,PA,19601,No,Residential (General) (Single),,,,,,,,

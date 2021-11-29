@@ -32,7 +32,7 @@ class Lead(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(200), nullable=False)
     last_name = db.Column(db.String(200), nullable=False)
-    age = db.Column(db.Integer, default=0) #just added
+    age = db.Column(db.Integer) #just added
     address = db.Column(db.String(200), nullable=False)
     city = db.Column(db.String(200), nullable=False)
     state = db.Column(db.String(200), nullable=False)
