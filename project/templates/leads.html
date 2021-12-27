@@ -104,7 +104,7 @@
 
 <!-- Pagination Links-->
 <div class="text-right" style="float: right; margin-top: 11px;">
-    <a href="{{ url_for('leads', page=leads.prev_num) }}"
+    <a href="{{ url_for('main.leads', page=leads.prev_num) }}"
        class="btn btn-outline-dark 
        {% if leads.page == 1 %}disabled{% endif %}">
         &laquo;
@@ -114,12 +114,12 @@
 {% if page_num %}
 <!-- Check for the active page and set the link to "Active"-->
             {% if leads.page == page_num %}
-            <a href="{{ url_for('leads', page=page_num) }}"
+            <a href="{{ url_for('main.leads', page=page_num) }}"
                class="btn btn-dark">
                 {{ page_num }}
             </a>
             {% else %}
-            <a href="{{ url_for('leads', page=page_num) }}"
+            <a href="{{ url_for('main.leads', page=page_num) }}"
                class="btn btn-outline-dark">
                 {{ page_num }}
             </a>
@@ -128,7 +128,7 @@
             ...
         {% endif %}
     {% endfor %}
-    <a href="{{ url_for('leads', page=leads.next_num) }}"
+    <a href="{{ url_for('main.leads', page=leads.next_num) }}"
        class="btn btn-outline-dark 
        {% if leads.page == leads.pages %}disabled{% endif %}">
         &raquo;

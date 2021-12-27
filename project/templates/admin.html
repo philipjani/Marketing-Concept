@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+
+{% if replies %}
+    {% for reply in replies %}
+        {{ reply }}
+    {% endfor %}
+{% endif %}
+
+{% endblock %}

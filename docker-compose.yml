@@ -1,0 +1,49 @@
+
+version: "3.8"
+
+services: 
+    mc_database:
+        image: postgres:13.4
+        container_name: mc_database
+        healthcheck:
+            test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "postgres" ]
+            timeout: 45s
+            interval: 10s
+            retries: 10
+        restart: always
+        volumes: 
+            - mc_volume:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=${MC_ROOT_PASSWORD:-unsecured_password}
+        ports:
+            - 5432:5432
+        cap_add:
+            - SYS_NICE  # CAP_SYS_NICE (gives sql cpu priority)
+
+    mc_sever:
+        build: 
+            context: .
+        container_name: mc_server
+        restart: always
+        depends_on:
+            mc_database:
+                condition: service_healthy
+        environment: 
+            - MC_PASS=${MC_ROOT_PASSWORD:-unsecured_password}
+            - PEOPLE_API_NAME=${PEOPLE_API_NAME}
+            - PEOPLE_API_PASS=${PEOPLE_API_PASS}
+            - DOCKER_FLAG=1
+            - PYTHONUNBUFFERED=1
+        ports:
+            - 5000:5000
+        volumes:
+            - ./:/app
+volumes:
+    mc_volume:
+        name: mc_volume
+
+networks: 
+    default:
+        name: mc_back
+        driver: bridge
