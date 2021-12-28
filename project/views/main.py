@@ -9,31 +9,7 @@ from project import skiptracing as st
 from project.models import Lead, Template, TextReply
 
 main = Blueprint("main", __name__)
-
-@main.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        #https://medevel.com/flask-tutorial-upload-csv-file-and-insert-rows-into-the-database/
-        uploaded_file = request.files['file']
-        if uploaded_file.filename != '':
-            file_path = os.path.join(main.config['UPLOAD_FOLDER'], uploaded_file.filename)
-            uploaded_file.save(file_path)
-            #https://stackoverflow.com/questions/41900593/csv-into-sqlite-table-python
-            df = pd.read_csv(UPLOAD_FOLDER + '/' + uploaded_file.filename)
-            df.columns = df.columns.str.strip()
-            # print(df)
-            df.index.names = ['id']
-            con = sqlite3.connect("test.db")
-            #https://stackoverflow.com/questions/3548673/how-can-i-replace-or-strip-an-extension-from-a-filename-in-python
-            # filename = os.path.splitext(uploaded_file.filename)
-            # filename = filename[0]
-            # df.to_sql(filename, con)
-            df.to_sql('lead', con, if_exists='replace')
-            con.close()
-        return redirect(url_for('index'))
-    else:
-        return render_template('index.html')
-
+ROWS_PER_PAGE = 20
 @main.route('/leads', methods=['POST', 'GET'])
 def leads():
     # add this

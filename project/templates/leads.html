@@ -9,7 +9,7 @@
 <br><h1 style="text-align:center">Lead Store</h1><br>
 
 <!-- filter table dropdown  DYLAN ADDED-->
-<form class="form-inline" method="POST" action="{{ url_for('updated_filter') }}">
+<form class="form-inline" method="POST" action="{{ url_for('main.updated_filter') }}">
 
     <div class="form-group">
         <label for="exampleFormControlInput1">Filter by </label>
@@ -37,7 +37,7 @@
 
 <div class="table-responsive">
     <form action="" method='POST'>
-        <table class="table table-bordered" style="border-radius: 4px; overflow: hidden;">
+        <table class="table table-striped" style="border-radius: 4px;">
             <tr>
                 <!-- <th>ID</th> -->
                 <th>First Name</th>

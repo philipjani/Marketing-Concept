@@ -13,26 +13,26 @@ class BaseMixin():
         return obj
 
 class Lead(BaseMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(200), nullable=False)
-    last_name = db.Column(db.String(200), nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    first_name = db.Column(db.String(200))
+    last_name = db.Column(db.String(200))
     age = db.Column(db.Integer) #just added
-    address = db.Column(db.String(200), nullable=False)
-    city = db.Column(db.String(200), nullable=False)
-    state = db.Column(db.String(200), nullable=False)
-    zip = db.Column(db.String(200), nullable=False)
-    owner_occupied = db.Column(db.String, nullable=False)
-    property_type = db.Column(db.String, nullable=False)
-    mls_status = db.Column(db.String, nullable=False)
-    # phone_number = db.Column(db.String(200), nullable=False)
-    # email = db.Column(db.String(200), nullable=False)
+    address = db.Column(db.String(200))
+    city = db.Column(db.String(200))
+    state = db.Column(db.String(200))
+    zip = db.Column(db.String(200))
+    owner_occupied = db.Column(db.String)
+    property_type = db.Column(db.String)
+    mls_status = db.Column(db.String)
+    phone_number = db.Column(db.String(200))
+    email = db.Column(db.String(200))
     mobile_phones = db.relationship('Phone_Number', backref='lead')
     emails = db.relationship('Email', backref='lead')
     contacted = db.Column(db.Integer, default=0)
     contact_time = db.Column(db.DateTime)
-    template_sent = db.Column(db.String(200), nullable=False)
+    template_sent = db.Column(db.String(200))
     response = db.Column(db.String(200))
-    motivation_level = db.Column(db.String(200), nullable=False)
+    motivation_level = db.Column(db.String(200))
 
 
     def __repr__(self):
