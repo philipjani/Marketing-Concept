@@ -1,6 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
 import requests
-import sqlite3
 import json
 import os
 from project.models import Lead, Phone_Number, Email, Template

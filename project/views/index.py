@@ -1,13 +1,5 @@
-import base64
-from flask_sqlalchemy import SQLAlchemy
-from os import environ
-from sqlalchemy import create_engine
 import pandas as pd
 from flask import Blueprint, request, redirect, url_for, render_template, flash
-
-from project.models import db
-from project import skiptracing as st
-from project.models import Lead, Template, TextReply
 
 index = Blueprint("index", __name__)
 
@@ -17,6 +9,7 @@ def page():
 
     if request.method == "POST":
         from project.__init__ import db
+
         f = request.files["file"]
         if f.filename != "":
             df = pd.read_csv(f.stream)
