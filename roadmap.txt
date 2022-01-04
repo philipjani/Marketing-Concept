@@ -22,11 +22,12 @@ done: limit per page results to custom number
 
 
 Templates:
-create and save Templates (Name/sms message)
-!!buttons above template that inserts variable for mass comms. (all leads columns up to zip)
-syntax highlighting for later
-save template to database
-delete and edit functionality
+done: create and save Templates (Name/sms message)
+done: !!buttons above template that inserts variable for mass comms. (all leads columns up to zip)
+later: syntax highlighting for
+done: save template to database
+done*: delete and edit functionality
+*need to add variable buttons to edit
 
 {
 Send SMS button:

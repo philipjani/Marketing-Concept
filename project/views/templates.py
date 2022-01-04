@@ -11,13 +11,11 @@ templates = Blueprint("templates", __name__)
 def main():
     form = TemplateForm()
     if request.method == 'POST':
-        temp_name = request.form['name']
-        temp_message = request.form['message']
-        sms = Template(name=temp_name, message=temp_message)
+        temp_name = form.name.data
+        temp_message = form.message.data
         try:
-            db.session.add(sms)
-            db.session.commit()
-            return redirect('/templates')
+            Template.create(name=temp_name, message=temp_message)
+            return redirect(url_for("templates.main"))
         except:
             return 'There was an issue adding your template.'
     else:
@@ -33,7 +31,7 @@ def delete(id):
         #https://flask-sqlalchemy.palletsprojects.com/en/2.x/queries/
         db.session.delete(sms_to_delete)
         db.session.commit()
-        return redirect('/templates')
+        return redirect(url_for("templates.main"))
     except:
         return 'There was an error in deleting the template.'
 

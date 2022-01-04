@@ -66,8 +66,6 @@ def retrieve_selected_leads(db, lead_ids):
 # Added by Dylan
 # changed by Zack
 def filter(category, query_string, rows):
-    print(f'rows: {rows}')
-    print(f'query_string: {query_string} || type(query_string): {type(query_string)}')
     page = request.args.get("page", 1, type=int)
     leads = (
         db.session.query(Lead)
