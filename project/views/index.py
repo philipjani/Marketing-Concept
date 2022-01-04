@@ -12,10 +12,13 @@ def page():
 
         f = request.files["file"]
         if f.filename != "":
-            df = pd.read_csv(f.stream)
-            con = db.engine
-            df.to_sql("lead", con, if_exists="append", index=False)
-            flash("csv uploaded successfully")
+            try:
+                df = pd.read_csv(f.stream)
+                con = db.engine
+                df.to_sql("lead", con, if_exists="append", index=False)
+                flash("csv uploaded successfully")
+            except BaseException:
+                flash("something went wrong during csv upload")
         return redirect(url_for("index.page"))
     else:
         return render_template("index.html")

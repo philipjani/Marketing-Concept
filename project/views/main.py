@@ -9,94 +9,51 @@ from project import skiptracing as st
 from project.models import Lead, Template, TextReply
 
 main = Blueprint("main", __name__)
-ROWS_PER_PAGE = 20
-@main.route('/leads', methods=['POST', 'GET'])
-def leads():
-    # add this
-    # https://stackoverflow.com/questions/18290142/multiple-forms-in-a-single-page-using-flask-and-wtforms
-    # https://stackoverflow.com/questions/58122969/flask-multiple-forms-on-the-same-page
-    # https://stackoverflow.com/questions/53134216/multiple-forms-on-1-page-python-flask
-    if request.method == 'POST':
-        selected = request.form.getlist('select')
-        leads = st.retrieve_selected_leads(db, selected)
-        for lead in leads:
-            # API call does not work without first name, OR if already have phone/emails
-            if not lead.first_name or lead.mobile_phones or lead.emails:
-                # print('Skipped!')
-                continue
-            lead_dict = st.get_lead_dict(lead)
-            # pprint(lead_dict)
-            person_data = st.get_pf_api_data(lead_dict)
-            # pprint(person_data)
-            age, mobile_phones, emails = st.extract_info_from_person_data(person_data)
-            st.update_person_db(db, lead, age, mobile_phones, emails)
-    # try:
-    page = request.args.get('page', 1, type=int)
-    leads = db.session.query(Lead).paginate(page=page, per_page=ROWS_PER_PAGE)
-    return render_template('leads.html', leads=leads)
-    # except:
-    #     return 'There was an issue retrieving your leads.'
 
-#Added by Dylan
-def filter(category, query_string):
-    page = request.args.get('page', 1, type=int)
-    leads = db.session.query(Lead).filter(getattr(Lead, category).like(f'%{query_string}%')).paginate(page=page, per_page=ROWS_PER_PAGE)
-    return leads
+# @main.route('/templates', methods = ["POST", "GET"])
+# def templates():
+#     if request.method == 'POST':
+#         temp_name = request.form['name']
+#         temp_message = request.form['message']
+#         sms = Template(name=temp_name, message=temp_message)
+#         try:
+#             db.session.add(sms)
+#             db.session.commit()
+#             return redirect('/templates')
+#         except:
+#             return 'There was an issue adding your template.'
+#     else:
+#         #https://stackoverflow.com/questions/2633218/how-can-i-select-all-rows-with-sqlalchemy/26217436
+#         sms_templates = Template.query.all()
+#         return render_template('templates.html', sms_templates=sms_templates)
 
-#Added by Dylan
-@main.route('/updated_filter', methods = ["POST", "GET"])
-def updated_filter():
-    if request.method == 'POST':
-        column = request.form.get("comp_select")
-        data = request.form.get("info")
-        leads = filter(column, data)
-        return render_template('leads.html', leads=leads)
+# @main.route('/delete/<int:id>')
+# def delete(id):
+#     sms_to_delete = Template.query.get_or_404(id)
 
+#     try:
+#         #https://flask-sqlalchemy.palletsprojects.com/en/2.x/queries/
+#         db.session.delete(sms_to_delete)
+#         db.session.commit()
+#         return redirect('/templates')
+#     except:
+#         return 'There was an error in deleting the template.'
 
-@main.route('/templates', methods = ["POST", "GET"])
-def templates():
-    if request.method == 'POST':
-        temp_name = request.form['name']
-        temp_message = request.form['message']
-        sms = Template(name=temp_name, message=temp_message)
-        try:
-            db.session.add(sms)
-            db.session.commit()
-            return redirect('/templates')
-        except:
-            return 'There was an issue adding your template.'
-    else:
-        #https://stackoverflow.com/questions/2633218/how-can-i-select-all-rows-with-sqlalchemy/26217436
-        sms_templates = Template.query.all()
-        return render_template('templates.html', sms_templates=sms_templates)
-
-@main.route('/delete/<int:id>')
-def delete(id):
-    sms_to_delete = Template.query.get_or_404(id)
-
-    try:
-        #https://flask-sqlalchemy.palletsprojects.com/en/2.x/queries/
-        db.session.delete(sms_to_delete)
-        db.session.commit()
-        return redirect('/templates')
-    except:
-        return 'There was an error in deleting the template.'
-
-@main.route('/update/<int:id>', methods=['GET', 'POST'])
-def update(id):
-    template_update = Template.query.get_or_404(id)
+# @main.route('/update/<int:id>', methods=['GET', 'POST'])
+# def update(id):
+#     template_update = Template.query.get_or_404(id)
     
-    if request.method == 'POST':
-        template_update.name = request.form['name']
-        template_update.message = request.form['message']
+#     if request.method == 'POST':
+#         template_update.name = request.form['name']
+#         template_update.message = request.form['message']
 
-        try:
-            db.session.commit()
-            return redirect('/templates')
-        except:
-            return 'There was an error editing the template.'
-    else:
-        return render_template('update.html', template_update=template_update)
+#         try:
+#             db.session.commit()
+#             return redirect('/templates')
+#         except:
+#             return 'There was an error editing the template.'
+#     else:
+#         return render_template('update.html', template_update=template_update)
 
 @main.route('/admin', methods=['GET'])
 def admin():

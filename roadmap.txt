@@ -1,0 +1,43 @@
+Index:
+Done: upload document
+
+Leads:
+Done: add trace_date column to leads which will be null if never traced.
+later: select by amount of leads to be traced. ie: type in 1000 to trace the first 1000 results
+later: make export csv button
+
+filters:
+later: age (>, <, == ) order by.
+Later implimentation:
+later: MLS status (FAIL, NONE), state, zip, contacted, time of contact (>, <, ==), sent template (a, b testing), response (True/False) 
+later:
+    select all to affect all previously filtered results regardless of what is displayed
+    with confirm box that lists the details of search
+
+
+
+skiptrace refreshes the page:
+Done: display table with all leads so far
+done: limit per page results to custom number
+
+
+Templates:
+create and save Templates (Name/sms message)
+!!buttons above template that inserts variable for mass comms. (all leads columns up to zip)
+syntax highlighting for later
+save template to database
+delete and edit functionality
+
+{
+Send SMS button:
+    creates a pop-up with your templates with checkbox to select
+    show applied templates? button
+    confirm button
+        leads to confirmation page
+            says what your template is with confirm/cancel buttons
+            infinate scroll beneath with the applied templates
+apply template
+response string(2000)
+}
+
+parse responses.

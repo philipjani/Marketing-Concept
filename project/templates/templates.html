@@ -5,26 +5,35 @@
 {% endblock %} 
 
 {% block body %}
+    <script src="{{ url_for('static', filename='js/templates.js') }}"></script>
     <br>
     <h1 style="text-align: center;">SMS Templates</h1>
     <br>
     <form action="" method="POST">
         <div class="mb-3">
-            <label class="form-label">Template Name</label>
-            <input class="form-control" placeholder="Name" name="name">
+            {{ form.name.label (class="form-label") }}
+            {{ form.name (class="form-control", placeholder="Name") }}
         </div>
         <div class="mb-3">
-            <label class="form-label">SMS Message</label>
-            <textarea class="form-control" rows="3" placeholder="SMS Template" name="message"></textarea>
+            {{ form.message.label (class="form-label") }}
+            <button data-flag="fname" class="btn btn-primary">First Name</button>
+            <button data-flag="lname" class="btn btn-primary">Last Name</button>
+            <button data-flag="age" class="btn btn-primary">Age</button>
+            <button data-flag="address" class="btn btn-primary">Address</button>
+            <button data-flag="city" class="btn btn-primary">City</button>
+            <button data-flag="state" class="btn btn-primary">State</button>
+            <button data-flag="zip" class="btn btn-primary">Zip</button>
+            {{ form.message (class="form-control", placeholder="SMS Template", rows="3") }}
         </div>
         <div style="float: right;">
-            <input class="btn btn-secondary" type="submit" value="Save Template">
+            {{ form.template_submit (class="btn btn-secondary") }}
+            <!-- <input class="btn btn-secondary" type="submit" value="Save Template"> -->
           </div>
     </form>
     <br><br>
     <label class="form-label">Saved Templates</label>
     
-    {% for template in sms_templates%}
+    {% for template in sms_templates %}
         <ul class="list-group" style="margin-bottom: 15px;">
             <li class="list-group-item">
                 <h6>Template Name:</h6> {{template.name}} <br><br>

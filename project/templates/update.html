@@ -17,7 +17,7 @@
             <label class="form-label">SMS Message</label>
             <textarea class="form-control" rows="3" placeholder="SMS Template" name="message">{{template_update.message}}</textarea>
         </div>
-        <a href="{{ url_for('main.templates') }}"><button class="btn btn-outline-secondary" style="float: right; margin-left: 5px;">Cancel</button></a>
+        <a href="{{ url_for('templates.main') }}"><button class="btn btn-outline-secondary" style="float: right; margin-left: 5px;">Cancel</button></a>
         <input type="submit" value="Save Changes" class="btn btn-outline-success" style="float: right;">
     </form>
 

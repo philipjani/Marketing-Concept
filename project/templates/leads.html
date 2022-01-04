@@ -9,27 +9,25 @@
 <br><h1 style="text-align:center">Lead Store</h1><br>
 
 <!-- filter table dropdown  DYLAN ADDED-->
-<form class="form-inline" method="POST" action="{{ url_for('main.updated_filter') }}">
+<form class="form-inline" method="POST">
 
     <div class="form-group">
-        <label for="exampleFormControlInput1">Filter by </label>
+        {{ form.comp_select.label }}
         <div class="input-group">
-                <select name="comp_select" class="selectpicker form-control">
-                    <option>last_name</option>
-                    <option>city</option>
-                    <option>zip</option>
-                    <option>owner_occupied</option>
-                    <option>property_type</option>
-                    <option>mls_status</option>
-                </select>
+            {{ form.comp_select (class="selectpicker form-control") }}
         </div>
         <div class="form-group">
-            <label for="exampleFormControlInput1">Enter Filter Query</label>
-            <input name="info" class="form-control" id="exampleFormControlInput1" placeholder="name/city/zip">
+            {{ form.info.label }}
+            {{ form.info (class="form-control", id="exampleFormControlInput1", placeholder="name/city/zip") }}
         </div>
-        <button type="submit" class="btn btn-secondary" style="margin-top: 10px;">Go</button>
+        <div class="form-group">
+            {{ form.length.label }}
+            {{ form.length (class="form-control", value="20") }}
+        </div>
+        {{ form.filter_submit (class="btn btn-secondary", style="margin-top: 10px;") }}
     </div>
 </form>
+
 
 
     
@@ -39,7 +37,7 @@
     <form action="" method='POST'>
         <table class="table table-striped" style="border-radius: 4px;">
             <tr>
-                <!-- <th>ID</th> -->
+                <th>Number</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Age</th>
@@ -62,7 +60,7 @@
             {%  for lead in leads.items %}
                 {% if lead.first_name %}
             <tr>
-                <!-- <td>{{lead.id}}</td> -->
+                <td>{{loop.index}}</td>
                 <td>{{lead.first_name}}</td>
                 <td>{{lead.last_name}}</td>
                 <td>{{lead.age|int}}</td>
@@ -104,7 +102,7 @@
 
 <!-- Pagination Links-->
 <div class="text-right" style="float: right; margin-top: 11px;">
-    <a href="{{ url_for('main.leads', page=leads.prev_num) }}"
+    <a href="{{ url_for('leads.main', page=leads.prev_num) }}"
        class="btn btn-outline-dark 
        {% if leads.page == 1 %}disabled{% endif %}">
         &laquo;
@@ -114,12 +112,12 @@
 {% if page_num %}
 <!-- Check for the active page and set the link to "Active"-->
             {% if leads.page == page_num %}
-            <a href="{{ url_for('main.leads', page=page_num) }}"
+            <a href="{{ url_for('leads.main', page=page_num) }}"
                class="btn btn-dark">
                 {{ page_num }}
             </a>
             {% else %}
-            <a href="{{ url_for('main.leads', page=page_num) }}"
+            <a href="{{ url_for('leads.main', page=page_num) }}"
                class="btn btn-outline-dark">
                 {{ page_num }}
             </a>
@@ -128,7 +126,7 @@
             ...
         {% endif %}
     {% endfor %}
-    <a href="{{ url_for('main.leads', page=leads.next_num) }}"
+    <a href="{{ url_for('leads.main', page=leads.next_num) }}"
        class="btn btn-outline-dark 
        {% if leads.page == leads.pages %}disabled{% endif %}">
         &raquo;

@@ -40,8 +40,9 @@ class Lead(BaseMixin, db.Model):
     emails = db.relationship("Email", backref="lead")
     contacted = db.Column(db.Integer, default=0)
     contact_time = db.Column(db.DateTime)
+    trace_date = db.Column(db.DateTime)
     template_sent = db.Column(db.String(200))
-    response = db.Column(db.String(200))
+    response = db.Column(db.String(2000))
     motivation_level = db.Column(db.String(200))
 
 

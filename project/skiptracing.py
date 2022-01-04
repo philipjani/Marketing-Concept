@@ -6,20 +6,6 @@ from project.models import Lead, Phone_Number, Email, Template
 from pprint import pprint
 
 
-def convert_lead_ids_to_ints(lead_ids):
-    ints_selected = []
-    for id_num in lead_ids:
-        ints_selected.append(int(id_num))
-    tuple_selected = tuple(ints_selected)
-    return tuple_selected
-
-
-def retrieve_selected_leads(db, lead_ids):
-    tuple_selected = convert_lead_ids_to_ints(lead_ids)
-    leads = db.session.query(Lead).filter(Lead.id.in_(tuple_selected)).all()
-    return leads
-
-
 def get_lead_dict(lead):
     lead_dict = {
         "FirstName": lead.first_name,
