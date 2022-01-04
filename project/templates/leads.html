@@ -12,19 +12,19 @@
 <form class="form-inline" method="POST">
 
     <div class="form-group">
-        {{ form.comp_select.label }}
+        {{ filter_form.comp_select.label }}
         <div class="input-group">
-            {{ form.comp_select (class="selectpicker form-control") }}
+            {{ filter_form.comp_select (class="selectpicker form-control") }}
         </div>
         <div class="form-group">
-            {{ form.info.label }}
-            {{ form.info (class="form-control", id="exampleFormControlInput1", placeholder="name/city/zip") }}
+            {{ filter_form.info.label }}
+            {{ filter_form.info (class="form-control", id="exampleFormControlInput1", placeholder="name/city/zip") }}
         </div>
         <div class="form-group">
-            {{ form.length.label }}
-            {{ form.length (class="form-control", value="20") }}
+            {{ filter_form.length.label }}
+            {{ filter_form.length (class="form-control", value="20") }}
         </div>
-        {{ form.filter_submit (class="btn btn-secondary", style="margin-top: 10px;") }}
+        {{ filter_form.filter_submit (class="btn btn-secondary", style="margin-top: 10px;") }}
     </div>
 </form>
 
@@ -37,6 +37,7 @@
     <form action="" method='POST'>
         <table class="table table-striped" style="border-radius: 4px;">
             <tr>
+                <th>Select</th>
                 <th>Number</th>
                 <th>First Name</th>
                 <th>Last Name</th>
@@ -55,11 +56,11 @@
                 <th>Sent Template</th>
                 <th>Response</th>
                 <th>Motivation Level</th>
-                <th>Select</th>
             </tr>
             {%  for lead in leads.items %}
                 {% if lead.first_name %}
             <tr>
+                <td>{{lead_form.select (class="form-check-input", value=lead.id, style="margin-left: 5px;") }}</td>
                 <td>{{loop.index}}</td>
                 <td>{{lead.first_name}}</td>
                 <td>{{lead.last_name}}</td>
@@ -90,13 +91,12 @@
                 <td>{{lead.template_sent}}</td>
                 <td>{{lead.response}}</td>
                 <td>{{lead.motivation_level}}</td>
-                <td><input class="form-check-input" type="checkbox" id="select" name="select" value={{lead.id}} style="margin-right: 5px;"></td>
-                <!-- {{lead.id}} -->
+                
             </tr>
                 {% endif %}
             {% endfor %}
         </table>
-        <button type='submit' class="btn btn-secondary" style="margin-bottom: 10px;">Skiptrace Leads</button>
+        {{ lead_form.lead_submit (class="btn btn-secondary", style="margin-bottom: 10px;") }}
     </form>
 </div>
 
