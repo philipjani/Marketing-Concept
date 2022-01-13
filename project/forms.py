@@ -30,3 +30,9 @@ class TemplateForm(FlaskForm):
     name = StringField("Name of Template")
     message = TextAreaField("Template body")
     template_submit = SubmitField("Save")
+
+class ApplyForm(FlaskForm):
+    apply_submit = SubmitField("Apply SMS Template to leads")
+
+class ConfirmForm(FlaskForm):
+    confirm_submit = SubmitField("Confirm")

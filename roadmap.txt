@@ -37,6 +37,7 @@ Send SMS button:
         leads to confirmation page
             says what your template is with confirm/cancel buttons
             infinate scroll beneath with the applied templates
+            
 apply template
 response string(2000)
 }

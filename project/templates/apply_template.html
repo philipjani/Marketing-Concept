@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+<script src="{{ url_for('static', filename='js/apply.js') }}"></script>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-primary alert-dismissible fade show" role="alert">
+  {{ message }}
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<form method="POST">
+    <h2>Choose your SMS template</h2>
+{% for tem in templates %}
+    <div>
+        <input type="checkbox" name="temp" value="{{tem.id}}">
+        <h3>{{tem.name}}</h3>
+        <p>{{tem.message}}</p>
+    </div>
+{% endfor %}<div style="display: flex; flex-direction: column;">
+    <label for="sms_submit">Apply Template to {{amount}} Leads</label>
+    <input id="sms_submit" type="submit" value="Choose">
+</div>
+</form>
+{% endblock %}

@@ -13,5 +13,7 @@ def init_blueprints(app):
     from project.views.templates import templates as templates_blueprint
     app.register_blueprint(templates_blueprint)
 
+    from project.views.apply_template import apply as apply_blueprint
+    app.register_blueprint(apply_blueprint)
     return
     

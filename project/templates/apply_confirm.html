@@ -1,0 +1,62 @@
+f{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+
+{% block body %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const FNAME = "ttttttfnametttttt";
+        const LNAME = "ttttttlnametttttt";
+        const AGE = "ttttttagetttttt";
+        const ADDRESS = "ttttttaddresstttttt";
+        const CITY = "ttttttcitytttttt";
+        const STATE = "ttttttstatetttttt";
+        const ZIP = "ttttttziptttttt";
+        const message = document.querySelector("p[data-flag='tmess']");
+        const template = message.innerHTML;
+        let new_ = template.replace(FNAME, '{{ example.first_name }}')
+            .replace(LNAME, '{{ example.last_name }}')
+            .replace(AGE, '{{ example.age }}')
+            .replace(ADDRESS, '{{ example.address }}')
+            .replace(CITY, '{{ example.city }}')
+            .replace(STATE, '{{ example.state }}')
+            .replace(ZIP, '{{ example.zip }}');
+        message.innerHTML = new_;
+    });
+</script>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-primary alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<div style="display: flex; flex-direction: column;">
+    <h2>
+        {{template.name}}
+    </h2>
+    <p>
+        {{template.message}}
+    </p>
+</div>
+<div style="display: flex; flex-direction: column; border: solid">
+    <h2>
+        Example
+    </h2>
+    <p data-flag="tmess">
+        {{template.message}}
+    </p>
+</div>
+<form method="POST" style="display: flex; flex-direction: column;">
+    <h2>Use Template: "{{template.name}}" to send {{amount}} messages?</h2>
+    {{form_confirm.confirm_submit}}
+</form>
+{% endblock %}

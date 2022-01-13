@@ -1,10 +1,11 @@
+from datetime import datetime
 import pandas as pd
 from flask import Blueprint, request, redirect, url_for, render_template, flash
 import json
 import os
 import requests
 from project.__init__ import db
-from project.forms import FilterForm, LeadForm
+from project.forms import ApplyForm, FilterForm, LeadForm
 from project.models import db
 from project import skiptracing as st
 from project.models import Lead, Phone_Number, Email
@@ -14,9 +15,9 @@ leads = Blueprint("leads", __name__)
 
 @leads.route("/leads", methods=["POST", "GET"])
 def main():
-
     filter_form = FilterForm()
     lead_form = LeadForm()
+    apply_form = ApplyForm()
     filter_form.comp_select.choices = [
         "last_name",
         "city",
@@ -28,7 +29,6 @@ def main():
 
     if request.method == "POST":
         selected = request.form.getlist('select')
-        
         if filter_form.filter_submit.data:
             column = filter_form.comp_select.data
             data = filter_form.info.data
@@ -36,24 +36,41 @@ def main():
             leads_ = filter(column, data, rows)
         if lead_form.lead_submit.data:
             leads_ = retrieve_selected_leads(db, selected)
-            
+            skipped_int = 0
+            success = 0
             for lead in leads_:
             #     # API call does not work without first name, OR if already have phone/emails
                 if not lead.first_name or lead.mobile_phones or lead.emails:
-            #         # print('Skipped!')
+                    skipped_int += 1
+                    print(f'skipping due to lack of information: {lead}')
                     continue
+                if lead.last_trace is not None:
+                    skipped_int += 1
+                    print(f'skipping due already being traced: {lead}')
                 lead_dict = get_lead_dict(lead)
-                print(f'lead_dict: {lead_dict}')
-            #     # pprint(lead_dict)
                 person_data = get_pf_api_data(lead_dict)
-            # #     # pprint(person_data)
                 age, mobile_phones, emails = extract_info_from_person_data(person_data)
                 update_person_db(db, lead, age, mobile_phones, emails)
+                success += 1
+            try:
+                db.session.commit()
+                flash(f"traced {success} leads successfully. skipped {skipped_int} traces. see terminal for details")
+            except Exception as e:
+                flash("There was an error inserting API data into database. exception printed to terminal")
+                print(e)
+            page = request.args.get("page", 1, type=int)
+            leads_ = db.session.query(Lead).order_by(Lead.id).paginate(page=page, per_page=10)
+        if apply_form.apply_submit.data:
+            print(f'here')
+            if selected:
+                return redirect(url_for("apply.main", selected=selected))
+            else:
+                return redirect(url_for("leads.main"))
     if request.method == "GET":
         page = request.args.get("page", 1, type=int)
-        leads_ = db.session.query(Lead).paginate(page=page, per_page=20)
+        leads_ = db.session.query(Lead).order_by(Lead.id).paginate(page=page, per_page=10)
     return render_template(
-        "leads.html", lead_form=lead_form, leads=leads_, filter_form=filter_form
+        "leads.html", lead_form=lead_form, leads=leads_, filter_form=filter_form, apply_form=apply_form
     )
 
 
@@ -77,7 +94,7 @@ def extract_info_from_person_data(person_data):
 
 def get_pf_api_data(lead_dict):
     payload = json.dumps(lead_dict)
-    print(f'payload: {payload}')
+
     headers = {
         'Content-Type': 'application/json',
         'galaxy-ap-name': os.environ.get('PEOPLE_API_NAME'),
@@ -85,31 +102,24 @@ def get_pf_api_data(lead_dict):
         'galaxy-search-type': 'DevAPIContactEnrich'
     }
 
-    # r = requests.post('https://api.peoplefinderspro.com/contact/enrich', data=payload, headers=headers)
-    # response_body = r.text
-    # person_data = json.loads(response_body)
-    # person_data = r.json()
-    # return person_data
+
+    r = requests.post('https://api.peoplefinderspro.com/contact/enrich', data=payload, headers=headers)
+    response_body = r.text
+    person_data = json.loads(response_body)
+    person_data = r.json()
+    return person_data
 
 def update_person_db(db, lead, age, mobile_phones, emails):
     # Insert all phone numbers of lead into phone numbers table
     for phone in mobile_phones:
-        stmt = Phone_Number.__table__.insert().prefix_with('OR REPLACE').values(dict(mobile_phone=phone, lead_id=lead.id))
-        db.session.execute(stmt)
-  
-    # Insert all email of lead into emails table
+        new = Phone_Number(mobile_phone=phone, lead_id=lead.id)
+        db.session.add(new)
     for email in emails:
-        stmt = Email.__table__.insert().prefix_with('OR REPLACE').values(dict(email_address=email, lead_id=lead.id))
-        db.session.execute(stmt)
-
-    # Update age of leads
-    lead.age = age
-
-    try:
-      db.session.commit()
-    
-    except:
-      print("There was an error inserting API data into database.")
+        new = Email(email_address=email, lead_id=lead.id)
+        db.session.add(new)
+    if not age == '':
+        lead.age = age
+    lead.last_trace = datetime.utcnow()
 
 def retrieve_selected_leads(db, lead_ids):
     tuple_selected = convert_lead_ids_to_ints(lead_ids)

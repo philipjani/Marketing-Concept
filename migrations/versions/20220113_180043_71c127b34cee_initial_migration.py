@@ -1,8 +1,8 @@
 """initial migration
 
-Revision ID: f4d705cbdfb6
+Revision ID: 71c127b34cee
 Revises: 
-Create Date: 2022-01-04 16:06:45.722156
+Create Date: 2022-01-13 18:00:43.992907
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f4d705cbdfb6'
+revision = '71c127b34cee'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -38,6 +38,7 @@ def upgrade():
     sa.Column('template_sent', sa.String(length=200), nullable=True),
     sa.Column('response', sa.String(length=2000), nullable=True),
     sa.Column('motivation_level', sa.String(length=200), nullable=True),
+    sa.Column('last_trace', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('template',
@@ -48,14 +49,14 @@ def upgrade():
     )
     op.create_table('email',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('email_address', sa.String(length=20), nullable=False),
+    sa.Column('email_address', sa.String(length=100), nullable=False),
     sa.Column('contacted', sa.Integer(), nullable=True),
     sa.Column('contact_time', sa.DateTime(), nullable=True),
     sa.Column('response', sa.String(length=200), nullable=True),
     sa.Column('lead_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['lead_id'], ['lead.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('lead_id', 'email_address', name='unique_emails')
+    sa.UniqueConstraint('email_address')
     )
     op.create_table('phone_number',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -65,7 +66,7 @@ def upgrade():
     sa.Column('lead_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['lead_id'], ['lead.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('lead_id', 'mobile_phone', name='unique_phone_numbers')
+    sa.UniqueConstraint('mobile_phone')
     )
     op.create_table('email_reply',
     sa.Column('id', sa.Integer(), nullable=False),
