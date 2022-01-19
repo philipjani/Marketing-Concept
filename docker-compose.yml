@@ -33,12 +33,24 @@ services:
             - MC_PASS=${MC_ROOT_PASSWORD:-unsecured_password}
             - PEOPLE_API_NAME=${PEOPLE_API_NAME}
             - PEOPLE_API_PASS=${PEOPLE_API_PASS}
+            - TEXTBELT_API_KEY=${TEXTBELT_API_KEY}
             - DOCKER_FLAG=1
             - PYTHONUNBUFFERED=1
         ports:
             - 5000:5000
         volumes:
             - ./:/app
+
+    ngrok:
+        image: shkoliar/ngrok:latest
+        ports:
+            - 4551:4551
+        environment:
+            - DOMAIN=web
+            - PORT=80
+            - AUTH_TOKEN=${NGROK_TOKEN}
+            - DEBUG=true
+
 volumes:
     mc_volume:
         name: mc_volume
