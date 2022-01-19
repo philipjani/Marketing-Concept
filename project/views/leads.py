@@ -29,6 +29,7 @@ def main():
 
     if request.method == "POST":
         selected = request.form.getlist('select')
+        print(f'selected: {selected}')
         if filter_form.filter_submit.data:
             column = filter_form.comp_select.data
             data = filter_form.info.data
@@ -61,7 +62,6 @@ def main():
             page = request.args.get("page", 1, type=int)
             leads_ = db.session.query(Lead).order_by(Lead.id).paginate(page=page, per_page=10)
         if apply_form.apply_submit.data:
-            print(f'here')
             if selected:
                 return redirect(url_for("apply.main", selected=selected))
             else:

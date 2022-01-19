@@ -16,56 +16,85 @@ apply = Blueprint("apply", __name__)
 @apply.route("/apply/<selected>", methods=["GET", "POST"])
 def main(selected):
 
-    # this is bad code, and should be rewritten
+    # this try/except is bad code, and should be rewritten but I wrote it quickly
+    symbols = ["["," ","'",",","]"]
     sel = []
+    tmp = ""
+    print(f'len(selected): {len(selected)}')
+    print(f'type(selected: {type(selected)}')
     for s in selected:
-        try:
-            sel.append(int(s))
-        except Exception:
-            pass
+        print(f'top.s: {s}')
+        if s in symbols:
+            print(f's: {s}')
+            if tmp != "":
+                sel.append(int(tmp))
+                tmp = ""
+        else:
+            tmp += s
+
+    # if len(tmp) > 0
+    try:
+        sel.append(int(tmp))
+    except Exception:
+        pass
+    print(f'sel: {sel}')
     amount = len(sel)
     # for id_ in selected:
     #     classes.append(Lead.query.filter_by(id=id_).first())
     templates = Template.query.all()
     if request.method == "GET":
-        print(f"selected: {selected}")
-        print(f"templates: {templates}")
         return render_template(
             "apply_template.html", amount=amount, templates=templates
         )
     else:
-        re = request.form.get("temp")
-        if not re:
+        temp_id = request.form.get("temp")
+        if not temp_id:
             flash("you must select a template")
             return render_template(
                 "apply_template.html", amount=amount, templates=templates
             )
-        return redirect(url_for("apply.confirm", selected=selected, re=re))
+        return redirect(url_for("apply.confirm", selected=selected, temp_id=temp_id))
 
 
-@apply.route("/confirm/<selected>/<re>", methods=["GET", "POST"])
-def confirm(selected, re):
+@apply.route("/confirm/<selected>/<temp_id>", methods=["GET", "POST"])
+def confirm(selected, temp_id):
+    symbols = ["["," ","'",",","]"]
     sel = []
+    tmp = ""
     for s in selected:
-        try:
-            sel.append(int(s))
-        except Exception:
-            pass
+        if s in symbols:
+            print(f's: {s}')
+            if tmp != "":
+                sel.append(int(tmp))
+                tmp = ""
+        else:
+            tmp += s
+    try:
+        sel.append(int(tmp))
+    except Exception:
+        pass
+    print(f'sel: {sel}')
     amount = len(sel)
     example = Lead.query.filter_by(id=sel[0]).first()
     form_confirm = ConfirmForm()
-    template = Template.query.filter_by(id=re).first()
+    template = Template.query.filter_by(id=temp_id).first()
     if request.method == "POST":
+        print(f'here')
+        print(f'sel: {sel}')
         messages = []
         for id_ in sel:
+            print(f'id_: {id_}')
             recipient = Lead.query.filter_by(id=id_).first()
+            print(f'recipient: {recipient}')
             for p in recipient.mobile_phones:
+                print(f'p: {p}')
                 text = translate(recipient, template.message)
                 messages.append({"number": p.mobile_phone, "message": text})
                 print(f"messages: {messages}")
         fail = 0
         for m in messages:
             try:
+                # pass
                 send(m)
             except Exception as e:
                 print(e)
@@ -88,16 +117,17 @@ def confirm(selected, re):
 
 def send(message):
     print(f'message: {message} || type(message): {type(message)}')
-    print(f'os.getenv("TEXTBELT_API_KEY"): {os.getenv("TEXTBELT_API_KEY")}')
     r = requests.post(
         "https://textbelt.com/text",
         {
             # 'phone': f'2153171046',
-            # "phone": message.number,
+            # "phone": message["number"],
             "phone": "2062933922",
             "message": message["message"],
             "key": os.getenv("TEXTBELT_API_KEY"),
-            "replyWebhookUrl": "http://756c-2601-989-4580-8ea0-c4c5-506e-e425-fad6.ngrok.io/textreply",
+            # "key": os.getenv("TEXTBELT_API_KEY") + "_test", #use for testing. doesen't send 
+
+            "replyWebhookUrl": "http://b834-72-228-49-124.ngrok.io/textreply",
         },
     )
     print(f'r: {r.json()}')
@@ -121,5 +151,4 @@ def translate(target, template: str) -> str:
         .replace(STATE, target.state)
         .replace(ZIP, target.zip)
     )
-    print(f"new_: {new_}")
     return new_

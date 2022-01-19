@@ -21,7 +21,7 @@ services:
         cap_add:
             - SYS_NICE  # CAP_SYS_NICE (gives sql cpu priority)
 
-    mc_sever:
+    mc_server:
         build: 
             context: .
         container_name: mc_server
@@ -40,16 +40,19 @@ services:
             - 5000:5000
         volumes:
             - ./:/app
-
     ngrok:
         image: shkoliar/ngrok:latest
+        links:
+            - mc_server
         ports:
             - 4551:4551
         environment:
-            - DOMAIN=web
-            - PORT=80
+            - DOMAIN=mc_server
+            - PORT=5000
             - AUTH_TOKEN=${NGROK_TOKEN}
             - DEBUG=true
+            # - SUBDOMAIN="textreply" cannot impliment this without paid plan
+
 
 volumes:
     mc_volume:
