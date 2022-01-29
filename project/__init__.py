@@ -52,7 +52,7 @@ def config_db_uri(app):
         print("connecting to heroku...")
         uri = postfix(os.environ.get("DATABASE_URL"))
     # local
-    if os.environ.get("DOCKER_FLAG"):
+    elif os.environ.get("DOCKER_FLAG"):
         print("connecting to local through docker...")
         uri = f"postgresql://postgres:{db_password}@mc_database:5432/mc_db"
     else:
