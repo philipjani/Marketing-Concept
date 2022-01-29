@@ -11,6 +11,7 @@ from flask_socketio import SocketIO
 from project.helpers.flask_login import config as config_fl
 from project.blueprints import init_blueprints
 from project.helpers.populate_users import check_and_populate
+from project.models import Phone_Number
 
 db = SQLAlchemy()
 migrate_ = Migrate()
@@ -33,6 +34,7 @@ def create_app(test_config=None):
         return app
     except Exception as e:
         print(f'e: {e}')
+
 
 
 def config(app):
