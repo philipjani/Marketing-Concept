@@ -24,7 +24,7 @@ def webhook():
         number = reply['fromNumber']
         phone_id = Phone_Number.query.filter_by(mobile_phone=number).first()
         if not phone_id:
-            pass #make new contact. or log in someway
+            return f'{request.json}', 200
         else:
             TextReply.create(message=message, phone_id=phone_id, contact_time=datetime.utcnow())
             return f'{request.json}', 200
