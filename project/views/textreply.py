@@ -24,8 +24,6 @@ def webhook():
         message = reply["text"]
         number = clean_number(reply["fromNumber"])
         print(number)
-        for n in number:
-            print(n, type(n))
         phone = Phone_Number.query.filter_by(mobile_phone=number).first()
         if not phone:
             print(f"not found")

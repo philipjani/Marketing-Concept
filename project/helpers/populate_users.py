@@ -11,7 +11,7 @@ def check_and_populate(app):
         if not Users.query.filter_by(name="Philip").first():
             Users.create(name="Philip", password=pw)
             print(f'User: "Philip" created..')
-        if not Phone_Number.query.filter_by(mobile_phone="+12062933922").first():
-            Phone_Number.create(mobile_phone="+12062933922")
+        if not Phone_Number.query.filter_by(mobile_phone="2062933922").first():
+            Phone_Number.create(mobile_phone="2062933922")
             print("Zack's phone added")
 
