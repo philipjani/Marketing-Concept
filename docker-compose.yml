@@ -35,6 +35,7 @@ services:
             - PEOPLE_API_NAME=${PEOPLE_API_NAME}
             - PEOPLE_API_PASS=${PEOPLE_API_PASS}
             - TEXTBELT_API_KEY=${TEXTBELT_API_KEY}
+            - WEBHOOK=${WEBHOOK}
             - DOCKER_FLAG=1
             - PYTHONUNBUFFERED=1
         ports:

@@ -93,7 +93,8 @@ def confirm(selected, temp_id):
                 print(f'p: {p}')
                 text = translate(recipient, template.message)
                 messages.append({"number": p.mobile_phone, "message": text})
-                print(f"messages: {messages}")
+                
+            print(f"messages: {messages}")
         fail = 0
         for m in messages:
             try:
@@ -120,6 +121,7 @@ def confirm(selected, temp_id):
 
 def send(message):
     print(f'message: {message} || type(message): {type(message)}')
+    webhook = os.getenv("WEBHOOK")
     r = requests.post(
         "https://textbelt.com/text",
         {
@@ -130,7 +132,7 @@ def send(message):
             "key": os.getenv("TEXTBELT_API_KEY"),
             # "key": os.getenv("TEXTBELT_API_KEY") + "_test", #use for testing. doesen't send 
 
-            "replyWebhookUrl": "http://b834-72-228-49-124.ngrok.io/textreply",
+            "replyWebhookUrl": webhook,
         },
     )
     print(f'r: {r.json()}')
