@@ -1,6 +1,7 @@
 from datetime import datetime
 import pandas as pd
 from flask import Blueprint, request, redirect, url_for, render_template, flash
+from flask_login import login_required
 import json
 import os
 import requests
@@ -14,6 +15,7 @@ apply = Blueprint("apply", __name__)
 
 
 @apply.route("/apply/<selected>", methods=["GET", "POST"])
+@login_required
 def main(selected):
 
     # this try/except is bad code, and should be rewritten but I wrote it quickly
@@ -57,6 +59,7 @@ def main(selected):
 
 
 @apply.route("/confirm/<selected>/<temp_id>", methods=["GET", "POST"])
+@login_required
 def confirm(selected, temp_id):
     symbols = ["["," ","'",",","]"]
     sel = []

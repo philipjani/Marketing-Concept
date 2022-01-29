@@ -1,6 +1,7 @@
 from datetime import datetime
 import pandas as pd
 from flask import Blueprint, request, redirect, url_for, render_template, flash
+from flask_login import login_required
 import json
 import os
 import requests
@@ -14,6 +15,7 @@ leads = Blueprint("leads", __name__)
 
 
 @leads.route("/leads", methods=["POST", "GET"])
+@login_required
 def main():
     filter_form = FilterForm()
     lead_form = LeadForm()

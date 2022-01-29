@@ -1,5 +1,6 @@
 import pandas as pd
 from flask import Blueprint, request, redirect, url_for, render_template, flash
+from flask_login import login_required
 from project.forms import TemplateForm
 
 from project.models import db
@@ -8,6 +9,7 @@ from project.models import Lead, Template, TextReply
 templates = Blueprint("templates", __name__)
 
 @templates.route('/templates', methods = ["POST", "GET"])
+@login_required
 def main():
     form = TemplateForm()
     if request.method == 'POST':
@@ -24,6 +26,7 @@ def main():
     return render_template('templates.html', form=form, sms_templates=sms_templates)
 
 @templates.route('/delete/<int:id>')
+@login_required
 def delete(id):
     sms_to_delete = Template.query.get_or_404(id)
 
@@ -36,6 +39,7 @@ def delete(id):
         return 'There was an error in deleting the template.'
 
 @templates.route('/update/<int:id>', methods=['GET', 'POST'])
+@login_required
 def update(id):
     template_update = Template.query.get_or_404(id)
     

@@ -1,10 +1,12 @@
 import pandas as pd
 from flask import Blueprint, request, redirect, url_for, render_template, flash
+from flask_login import login_required
 
 index = Blueprint("index", __name__)
 
 
 @index.route("/", methods=["GET", "POST"])
+@login_required
 def page():
 
     if request.method == "POST":

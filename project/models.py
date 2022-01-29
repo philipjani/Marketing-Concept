@@ -1,4 +1,8 @@
 from datetime import datetime
+from enum import unique
+from werkzeug.security import generate_password_hash
+from flask_login import UserMixin
+
 from project.__init__ import db
 
 
@@ -22,6 +26,20 @@ class BaseMixin:
 
         return repr_
 
+class Users(BaseMixin, UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    name = db.Column(db.String(20), unique=True)
+    hashed_password = db.Column(db.String(120), nullable=False)
+
+    @classmethod
+    def create(cls, **kw):
+        """adds new User to database and hashes their password.
+        it also adds the user to bug reports
+        """
+        kw["hashed_password"] = generate_password_hash(kw["password"], method="sha256")
+        kw.pop("password")
+        user = super().create(**kw)
+        return user
 
 class Lead(BaseMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)

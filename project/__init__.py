@@ -4,27 +4,35 @@ import flask_migrate
 
 from sqlalchemy_utils.functions import database_exists
 from flask import Flask
-from flask_migrate import Migrate, init
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
+
+from project.helpers.flask_login import config as config_fl
 from project.blueprints import init_blueprints
+from project.helpers.populate_users import check_and_populate
 
 db = SQLAlchemy()
 migrate_ = Migrate()
 socketio = SocketIO(cors_allowed_origins="*")
+login_manager = config_fl()
 
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
+    try:
+        app = Flask(__name__)
+        config(app)
+        db.init_app(app)
+        migrate_.init_app(app, db, compare_type=True)
+        ready_db(app, test_config)
+        check_and_populate(app)
+        init_blueprints(app)
+        login_manager.init_app(app)
+        socketio.init_app(app)
 
-    app = Flask(__name__)
-    config(app)
-    db.init_app(app)
-    migrate_.init_app(app, db, compare_type=True)
-    ready_db(app, test_config)
-    socketio.init_app(app)
-    init_blueprints(app)
-
-    return app
+        return app
+    except Exception as e:
+        print(f'e: {e}')
 
 
 def config(app):
