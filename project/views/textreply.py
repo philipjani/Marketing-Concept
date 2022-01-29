@@ -9,6 +9,9 @@ textreply = Blueprint("textreply", __name__)
 @textreply.route('/textreply', methods=['POST'])
 def webhook():
     if request.method == 'POST':
+        print(f'received')
+        print(f'request: {request}')
+        print(f'request.json: {request.json}')
         if type(request.json) is str:
             print(f'request.json str: {request.json}')
             reply = json.loads(request.json)
