@@ -50,7 +50,7 @@ def config_db_uri(app):
     # Heroku
     if os.environ.get("_HEROKU_HOSTING"):
         print("connecting to heroku...")
-        uri = os.environ.get("DATABASE_URL")
+        uri = postfix(os.environ.get("DATABASE_URL"))
     # local
     elif os.environ.get("DOCKER_FLAG"):
         print("connecting to local through docker...")
