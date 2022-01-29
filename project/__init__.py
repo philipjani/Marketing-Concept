@@ -47,6 +47,11 @@ def config(app):
 
 def config_db_uri(app):
     db_password = os.environ.get("MC_PASS")
+    # Heroku
+    if os.environ.get("_HEROKU_HOSTING"):
+        print("connecting to heroku...")
+        uri = postfix(os.environ.get("DATABASE_URL"))
+    # local
     if os.environ.get("DOCKER_FLAG"):
         print("connecting to local through docker...")
         uri = f"postgresql://postgres:{db_password}@mc_database:5432/mc_db"
@@ -61,6 +66,16 @@ def config_db_uri(app):
         config_db_uri(app)
     return
 
+def postfix(string):
+    """replaces depreciated 'postgres:' with 'postgresql'"""
+    if string is None:
+        return None
+    else:
+        if string[0:9] == "postgres:":
+            new = "postgresql" + string[8:]
+            return new
+        else:
+            return string
 
 def ready_db(app, test_config):
     """Sets up db with Flask Migrate"""
