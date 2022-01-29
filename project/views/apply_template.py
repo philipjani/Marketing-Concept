@@ -129,9 +129,9 @@ def send(message):
     r = requests.post(
         "https://textbelt.com/text",
         {
-            # 'phone': f'2153171046',
+            'phone': f'2153171046',
             # "phone": message["number"],
-            "phone": "2062933922",
+            # "phone": "2062933922",
             "message": message["message"],
             "key": os.getenv("TEXTBELT_API_KEY"),
             # "key": os.getenv("TEXTBELT_API_KEY") + "_test", #use for testing. doesen't send 

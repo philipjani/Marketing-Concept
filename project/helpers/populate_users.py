@@ -14,4 +14,7 @@ def check_and_populate(app):
         if not Phone_Number.query.filter_by(mobile_phone="2062933922").first():
             Phone_Number.create(mobile_phone="2062933922")
             print("Zack's phone added")
+        if not Phone_Number.query.filter_by(mobile_phone="2153171046").first():
+            Phone_Number.create(mobile_phone="2153171046")
+            print("Philip's phone added")
 
