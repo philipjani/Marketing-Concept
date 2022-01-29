@@ -14,9 +14,11 @@ from project.models import Lead, Phone_Number, Email
 leads = Blueprint("leads", __name__)
 
 
+
 @leads.route("/leads", methods=["POST", "GET"])
 @login_required
 def main():
+    print(f'test')
     filter_form = FilterForm()
     lead_form = LeadForm()
     apply_form = ApplyForm()
@@ -50,9 +52,11 @@ def main():
                 if lead.mobile_phones or lead.emails:
                     skipped_int += 1
                     print(f'skipping due to already having phone/email: {lead}')
+                    continue
                 if lead.last_trace is not None:
                     skipped_int += 1
                     print(f'skipping due already being traced: {lead}')
+                    continue
                 lead_dict = get_lead_dict(lead)
                 person_data = get_pf_api_data(lead_dict)
                 print(f'person_data: {person_data}')
