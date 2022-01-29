@@ -6,11 +6,10 @@ build:
   docker:
     web: Dockerfile
   config:
-environment: 
-  - MC_PASS=${MC_ROOT_PASSWORD:-unsecured_password}
-  - USER_PASS=${USER_PASS:-unsecured_password}
-  - PEOPLE_API_NAME=${PEOPLE_API_NAME}
-  - PEOPLE_API_PASS=${PEOPLE_API_PASS}
-  - TEXTBELT_API_KEY=${TEXTBELT_API_KEY}
-  - DOCKER_FLAG=1
-  - PYTHONUNBUFFERED=1
+    MC_PASS: ${MC_ROOT_PASSWORD:-unsecured_password}
+    USER_PASS: ${USER_PASS:-unsecured_password}
+    PEOPLE_API_NAME: ${PEOPLE_API_NAME}
+    PEOPLE_API_PASS: ${PEOPLE_API_PASS}
+    TEXTBELT_API_KEY: ${TEXTBELT_API_KEY}
+    DOCKER_FLAG: 1
+    PYTHONUNBUFFERED: 1
