@@ -52,9 +52,10 @@ def main():
                     print(f'skipping due already being traced: {lead}')
                 lead_dict = get_lead_dict(lead)
                 person_data = get_pf_api_data(lead_dict)
-                age, mobile_phones, emails = extract_info_from_person_data(person_data)
-                update_person_db(db, lead, age, mobile_phones, emails)
-                success += 1
+                if person_data:
+                    age, mobile_phones, emails = extract_info_from_person_data(person_data)
+                    update_person_db(db, lead, age, mobile_phones, emails)
+                    success += 1
             try:
                 db.session.commit()
                 flash(f"traced {success} leads successfully. skipped {skipped_int} traces. see terminal for details")
