@@ -107,6 +107,7 @@ def get_pf_api_data(lead_dict):
 
     r = requests.post('https://api.peoplefinderspro.com/contact/enrich', data=payload, headers=headers)
     response_body = r.text
+    print(f'response_body: {response_body}')
     person_data = json.loads(response_body)
     person_data = r.json()
     return person_data
