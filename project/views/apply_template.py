@@ -121,8 +121,10 @@ def confirm(selected, temp_id):
 
 def send(message):
     print(f'message: {message} || type(message): {type(message)}')
-    # webhook = os.getenv("WEBHOOK")
-    webhook = "http://4bc3-72-228-49-124.ngrok.io/textreply"
+    if os.environ.get("_HEROKU_HOSTING"):
+        webhook = os.getenv("WEBHOOK")
+    else:
+        webhook = "http://4bc3-72-228-49-124.ngrok.io/textreply"
     print(f'webhook: {webhook}')
     r = requests.post(
         "https://textbelt.com/text",
