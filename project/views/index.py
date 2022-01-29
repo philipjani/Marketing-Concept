@@ -24,5 +24,5 @@ def page():
         return render_template("index.html")
 
         # return redirect(url_for("index.page"))
-    else:
-        return render_template("index.html")
+    
+    return render_template("index.html")
