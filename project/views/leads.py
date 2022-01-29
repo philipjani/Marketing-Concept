@@ -95,26 +95,25 @@ def extract_info_from_person_data(person_data):
     return age, mobile_phones, emails
 
 def get_pf_api_data(lead_dict):
-    try:
-        payload = json.dumps(lead_dict)
 
-        headers = {
-            'Content-Type': 'application/json',
-            'galaxy-ap-name': os.environ.get('PEOPLE_API_NAME'),
-            'galaxy-ap-password': os.environ.get('PEOPLE_API_PASS'),
-            'galaxy-search-type': 'DevAPIContactEnrich'
-        }
+    payload = json.dumps(lead_dict)
+
+    headers = {
+        'Content-Type': 'application/json',
+        'galaxy-ap-name': os.environ.get('PEOPLE_API_NAME'),
+        'galaxy-ap-password': os.environ.get('PEOPLE_API_PASS'),
+        'galaxy-search-type': 'DevAPIContactEnrich'
+    }
 
 
-        r = requests.post('https://api.peoplefinderspro.com/contact/enrich', data=payload, headers=headers)
-        response_body = r.text
-        print(f'response_body: {response_body}')
+    r = requests.post('https://api.peoplefinderspro.com/contact/enrich', data=payload, headers=headers)
+    response_body = r.text
+    print(f'response_body: {response_body}')
 
-        person_data = json.loads(response_body)
-        person_data = r.json()
-        return person_data
-    except Exception as e:
-        print(f'e: {e}')
+    person_data = json.loads(response_body)
+    person_data = r.json()
+    return person_data
+
 
 def update_person_db(db, lead, age, mobile_phones, emails):
     # Insert all phone numbers of lead into phone numbers table
