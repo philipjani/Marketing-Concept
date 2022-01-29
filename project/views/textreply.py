@@ -10,8 +10,10 @@ textreply = Blueprint("textreply", __name__)
 def webhook():
     if request.method == 'POST':
         if type(request.json) is str:
+            print(f'request.json str: {request.json}')
             reply = json.loads(request.json)
         elif type(request.json) is dict:
+            print(f'request.json dict: {request.json}')
             reply = request.json
         else:
             return
