@@ -53,13 +53,13 @@ def main():
                     skipped_int += 1
                     print(f'skipping due to already having phone/email: {lead}')
                     continue
-                if lead.last_trace is not None:
-                    skipped_int += 1
-                    print(f'skipping due already being traced: {lead}')
-                    continue
+                # if lead.last_trace is not None:
+                #     skipped_int += 1
+                #     print(f'skipping due already being traced: {lead}')
+                #     continue
                 lead_dict = get_lead_dict(lead)
                 person_data = get_pf_api_data(lead_dict)
-                print(f'person_data: {person_data}')
+                # print(f'person_data: {person_data}')
                 if person_data:
                     age, mobile_phones, emails = extract_info_from_person_data(person_data)
                     update_person_db(db, lead, age, mobile_phones, emails)
@@ -99,7 +99,13 @@ def extract_info_from_person_data(person_data):
     # first_name = person_data['person']['name']['firstName']
     # last_name = person_data['person']['name']['lastName']
     # middle_name = person_data['person']['name']['middleName']
+    print(f'person_data: {person_data}')
     age = person_data['person']['age']
+    print(f'age: {age} || type(age): {type(age)}')
+    try:
+        age = int(age)
+    except Exception:
+        age = -1
     email_data = person_data['person']['emails']
     emails = [x['email'] for x in email_data]
     phone_data = person_data['person']['phones']
@@ -120,20 +126,21 @@ def get_pf_api_data(lead_dict):
 
     r = requests.post('https://api.peoplefinderspro.com/contact/enrich', data=payload, headers=headers)
     response_body = r.text
-    print(f'response_body: {response_body}')
+    # print(f'response_body: {response_body}')
     person_data = json.loads(response_body)
-    print(f'person_data: {person_data}')
-    print(f'type(person_data): {type(person_data)}')
+    # print(f'person_data: {person_data}')
+    # print(f'type(person_data): {type(person_data)}')
     if not "person" in person_data.keys():
         return False
     person_data = r.json()
-    print(f'person_data: {person_data}')
+    # print(f'person_data: {person_data}')
     return person_data
 
 
 def update_person_db(db, lead, age, mobile_phones, emails):
     # Insert all phone numbers of lead into phone numbers table
     for phone in mobile_phones:
+        # print(f'phone: {phone}')
         new = Phone_Number(mobile_phone=phone, lead_id=lead.id)
         db.session.add(new)
     for email in emails:
