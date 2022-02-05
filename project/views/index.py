@@ -54,8 +54,6 @@ def dump_to_csv():
     with zipfile.ZipFile(folder, "w") as zip:
         print(f"dumps: {dumps}")
         for _, model in dumps.items():
-            print(f"type(model): {type(model)}")
-            print(f"model: {model}")
             with open(f"{model['name']}.csv", "w") as dump:
                 outcsv = csv_.writer(dump)
                 outcsv.writerow([h for h in model["type"].__mapper__.columns])
@@ -73,4 +71,4 @@ def dump_to_csv():
             data.compress_type = zipfile.ZIP_DEFLATED
             zip.writestr(data, _csv.read())
     folder.seek(0)
-    return send_file(folder, attachment_filename="test.zip", as_attachment=True)
+    return send_file(folder, attachment_filename="Marketing_Concept_dumps.zip", as_attachment=True)
