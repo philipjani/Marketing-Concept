@@ -43,3 +43,19 @@ response string(2000)
 }
 
 parse responses.
+
+new todo:
+make export csv button
+make csv upload work with exported csvs
+change Lead.age to be a string so that it works with desceased and null
+select by amount of leads to be traced. ie: type in 1000 to trace the first 1000 results
+apply ability to manually remove/add/edit rows
+syntax highlighting for templates
+row colorizing based on skiptrace results.
+filtering:
+    (MLS status (FAIL, NONE), state, zip, contacted, time of contact (>, <, ==), sent template (a, b testing), response (True/False) 
+    Apply SMS campaign button to textbelt all previously filtered results regardless of what is displayed on that specific page (because of pagination)
+    with confirm box that lists the details of search
+front end stuff
+
+
