@@ -5,6 +5,7 @@ import zipfile
 import tempfile
 from flask import (
     Blueprint,
+    redirect,
     request,
     render_template,
     flash,
@@ -13,6 +14,7 @@ from flask import (
 )
 from flask_login import login_required
 from project.__init__ import db
+from project.helpers.db_session import db_session
 from project.models import (
     Users,
     Phone_Number,
@@ -29,6 +31,7 @@ index = Blueprint("index", __name__)
 @index.route("/", methods=["GET", "POST"])
 @login_required
 def page():
+    # print(f'Lead.query.all(): {Lead.query.all()}')
     if request.method == "POST":
         f = request.files["file"]
         if f.filename != "":
@@ -41,6 +44,14 @@ def page():
                 print(f"e: {e}")(e)
     return render_template("index.html")
 
+@index.route("/delete")
+@login_required
+def delete():
+    with db_session() as sess:
+        delete = Lead.query.all()
+        for lead in delete:
+            sess.delete(lead)
+    return redirect(url_for("index.page"))
 
 @index.route("/download")
 @login_required
