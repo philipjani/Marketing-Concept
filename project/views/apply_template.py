@@ -1,15 +1,10 @@
-from datetime import datetime
-import pandas as pd
 from flask import Blueprint, request, redirect, url_for, render_template, flash
 from flask_login import login_required
-import json
 import os
 import requests
-from project.__init__ import db
-from project.forms import ConfirmForm, FilterForm, LeadForm, ApplyForm
-from project.models import Template, db
-from project import skiptracing as st
-from project.models import Lead, Phone_Number, Email
+from project.forms import ConfirmForm
+from project.models import Template
+from project.models import Lead
 
 apply = Blueprint("apply", __name__)
 

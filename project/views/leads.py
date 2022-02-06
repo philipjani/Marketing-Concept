@@ -78,7 +78,6 @@ def main():
     if request.method == "GET":
         page = request.args.get("page", 1, type=int)
         leads_ = db.session.query(Lead).order_by(Lead.id).paginate(page=page, per_page=10)
-        print(f'Lead.query.get(11921).age: {Lead.query.get(11873).age}')
     return render_template(
         "leads.html", lead_form=lead_form, leads=leads_, filter_form=filter_form, apply_form=apply_form
     )
