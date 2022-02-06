@@ -21,7 +21,6 @@ def main():
         except:
             return 'There was an issue adding your template.'
     else:
-        #https://stackoverflow.com/questions/2633218/how-can-i-select-all-rows-with-sqlalchemy/26217436
         sms_templates = Template.query.all()
     return render_template('templates.html', form=form, sms_templates=sms_templates)
 
@@ -31,7 +30,6 @@ def delete(id):
     sms_to_delete = Template.query.get_or_404(id)
 
     try:
-        #https://flask-sqlalchemy.palletsprojects.com/en/2.x/queries/
         db.session.delete(sms_to_delete)
         db.session.commit()
         return redirect(url_for("templates.main"))

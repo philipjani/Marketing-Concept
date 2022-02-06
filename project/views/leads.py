@@ -43,11 +43,11 @@ def main():
             #     # API call does not work without first name, OR if already have phone/emails
                 if not lead.first_name:
                     skipped_int += 1
-                    print(f'skipping due to lack of information: {lead}')
+                    flash(f'skipping due to lack of information: {lead}')
                     continue
                 if lead.mobile_phones or lead.emails:
                     skipped_int += 1
-                    print(f'skipping due to already having phone/email: {lead}')
+                    flash(f'skipping due to already having phone/email: {lead}')
                     continue
                 # if lead.last_trace is not None:
                 #     skipped_int += 1
