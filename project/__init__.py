@@ -84,15 +84,15 @@ def ready_db(app, test_config):
     if test_config is not None:
         app.config.update(test_config)
         return
-    # with app.app_context():
-    #     try:
-    #         # flask_migrate.upgrade()
-    #         # print("database upgraded successfully")
-    #     except Exception:
-    #         raise RuntimeError(
-    #             """Flask Migrations/versions directory either not found or empty.\n 
-    #             check your Migrations directory errors"""
-    #         )
+    with app.app_context():
+        try:
+            flask_migrate.upgrade()
+            print("database upgraded successfully")
+        except Exception:
+            raise RuntimeError(
+                """Flask Migrations/versions directory either not found or empty.\n 
+                check your Migrations directory errors"""
+            )
     return
 
 
