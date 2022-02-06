@@ -1,5 +1,4 @@
 from datetime import datetime
-import pandas as pd
 from flask import Blueprint, request, redirect, url_for, render_template, flash
 from flask_login import login_required
 import json
@@ -8,7 +7,6 @@ import requests
 from project.__init__ import db
 from project.forms import ApplyForm, FilterForm, LeadForm
 from project.models import db
-from project import skiptracing as st
 from project.models import Lead, Phone_Number, Email
 
 leads = Blueprint("leads", __name__)
@@ -18,7 +16,6 @@ leads = Blueprint("leads", __name__)
 @leads.route("/leads", methods=["POST", "GET"])
 @login_required
 def main():
-    print(f'test')
     filter_form = FilterForm()
     lead_form = LeadForm()
     apply_form = ApplyForm()
@@ -33,7 +30,6 @@ def main():
 
     if request.method == "POST":
         selected = request.form.getlist('select')
-        print(f'selected: {selected}')
         if filter_form.filter_submit.data:
             column = filter_form.comp_select.data
             data = filter_form.info.data
@@ -59,7 +55,6 @@ def main():
                 #     continue
                 lead_dict = get_lead_dict(lead)
                 person_data = get_pf_api_data(lead_dict)
-                # print(f'person_data: {person_data}')
                 if person_data:
                     age, mobile_phones, emails = extract_info_from_person_data(person_data)
                     update_person_db(db, lead, age, mobile_phones, emails)
@@ -83,6 +78,7 @@ def main():
     if request.method == "GET":
         page = request.args.get("page", 1, type=int)
         leads_ = db.session.query(Lead).order_by(Lead.id).paginate(page=page, per_page=10)
+        print(f'Lead.query.get(11921).age: {Lead.query.get(11873).age}')
     return render_template(
         "leads.html", lead_form=lead_form, leads=leads_, filter_form=filter_form, apply_form=apply_form
     )
@@ -96,16 +92,7 @@ def convert_lead_ids_to_ints(lead_ids):
     return tuple_selected
 
 def extract_info_from_person_data(person_data):
-    # first_name = person_data['person']['name']['firstName']
-    # last_name = person_data['person']['name']['lastName']
-    # middle_name = person_data['person']['name']['middleName']
-    print(f'person_data: {person_data}')
-    age = person_data['person']['age']
-    print(f'age: {age} || type(age): {type(age)}')
-    try:
-        age = int(age)
-    except Exception:
-        age = -1
+    age = person_data['person']['age'] if person_data['person']['age'] != '' else "Unknown"
     email_data = person_data['person']['emails']
     emails = [x['email'] for x in email_data]
     phone_data = person_data['person']['phones']
@@ -115,39 +102,30 @@ def extract_info_from_person_data(person_data):
 def get_pf_api_data(lead_dict):
 
     payload = json.dumps(lead_dict)
-
     headers = {
         'Content-Type': 'application/json',
         'galaxy-ap-name': os.environ.get('PEOPLE_API_NAME'),
         'galaxy-ap-password': os.environ.get('PEOPLE_API_PASS'),
         'galaxy-search-type': 'DevAPIContactEnrich'
     }
-
-
     r = requests.post('https://api.peoplefinderspro.com/contact/enrich', data=payload, headers=headers)
     response_body = r.text
-    # print(f'response_body: {response_body}')
     person_data = json.loads(response_body)
-    # print(f'person_data: {person_data}')
-    # print(f'type(person_data): {type(person_data)}')
     if not "person" in person_data.keys():
         return False
     person_data = r.json()
-    # print(f'person_data: {person_data}')
     return person_data
 
 
 def update_person_db(db, lead, age, mobile_phones, emails):
     # Insert all phone numbers of lead into phone numbers table
     for phone in mobile_phones:
-        # print(f'phone: {phone}')
         new = Phone_Number(mobile_phone=phone, lead_id=lead.id)
         db.session.add(new)
     for email in emails:
         new = Email(email_address=email, lead_id=lead.id)
         db.session.add(new)
-    if not age == '':
-        lead.age = age
+    lead.age = age
     lead.last_trace = datetime.utcnow()
 
 def retrieve_selected_leads(db, lead_ids):

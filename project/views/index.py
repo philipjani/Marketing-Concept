@@ -78,18 +78,18 @@ def dump_to_csv():
     )
 
 
-import flask_migrate
-from flask import redirect, url_for
+# import flask_migrate
+# from flask import redirect, url_for
 
 
-@index.route("/convert")
-@login_required
-def convert():
-    leads = db.session.query(Lead).all()
+# @index.route("/convert")
+# @login_required
+# def convert():
+#     leads = db.session.query(Lead).all()
 
-    for l in leads:
-        db.session.delete(l)
-    flask_migrate.upgrade()
-    db.session.commit()
-    flash("deleted")
-    return redirect(url_for("index.page"))
+#     for l in leads:
+#         db.session.delete(l)
+#     flask_migrate.upgrade()
+#     db.session.commit()
+#     flash("deleted")
+#     return redirect(url_for("index.page"))
