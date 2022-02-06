@@ -2,13 +2,14 @@ import pandas as pd
 import csv as csv_
 from io import BytesIO
 import zipfile
-
+import tempfile
 from flask import (
     Blueprint,
     request,
     render_template,
     flash,
     send_file,
+    url_for,
 )
 from flask_login import login_required
 from project.__init__ import db
@@ -25,7 +26,7 @@ from project.models import (
 index = Blueprint("index", __name__)
 
 
-@index.route("/")
+@index.route("/", methods=["GET", "POST"])
 @login_required
 def page():
     if request.method == "POST":
@@ -37,8 +38,7 @@ def page():
                 df.to_sql("lead", con, if_exists="append", index=False)
                 flash("csv uploaded successfully")
             except Exception as e:
-                flash(e)
-        return render_template("index.html")
+                print(f"e: {e}")(e)
     return render_template("index.html")
 
 
@@ -49,26 +49,47 @@ def dump_to_csv():
     dumps = {}
     models = [Users, Lead, Phone_Number, TextReply, Email, EmailReply, Template]
     for m in models:
-        dumps[m.__name__] = {"type": m, "name": m.__name__}
+        headers = [c.name for c in m.__mapper__.columns]
+        for i, h in enumerate(headers):
+            if h == "id":
+                headers.pop(i)
+        dumps[m.__name__] = {"type": m, "name": m.__name__, "headers": headers}
     folder = BytesIO()
     with zipfile.ZipFile(folder, "w") as zip:
-        print(f"dumps: {dumps}")
+
         for _, model in dumps.items():
-            with open(f"{model['name']}.csv", "w") as dump:
+            with tempfile.SpooledTemporaryFile(mode="w") as dump:
                 outcsv = csv_.writer(dump)
-                outcsv.writerow([h for h in model["type"].__mapper__.columns])
+                outcsv.writerow([h for h in model["headers"]])
                 [
                     outcsv.writerow(
-                        [
-                            getattr(curr, column.name)
-                            for column in model["type"].__mapper__.columns
-                        ]
+                        [getattr(curr, column) for column in model["headers"]]
                     )
                     for curr in model["type"].query.all()
                 ]
-            _csv = open(f"{model['name']}.csv", "r")
-            data = zipfile.ZipInfo(f"{model['name']}.csv")
-            data.compress_type = zipfile.ZIP_DEFLATED
-            zip.writestr(data, _csv.read())
+
+                dump.seek(0)
+                data = zipfile.ZipInfo(f"{model['name']}.csv")
+                data.compress_type = zipfile.ZIP_DEFLATED
+                zip.writestr(data, dump.read())
     folder.seek(0)
-    return send_file(folder, attachment_filename="Marketing_Concept_dumps.zip", as_attachment=True)
+    return send_file(
+        folder, attachment_filename="Marketing_Concept_dumps.zip", as_attachment=True
+    )
+
+
+import flask_migrate
+from flask import redirect, url_for
+
+
+@index.route("/convert")
+@login_required
+def convert():
+    leads = db.session.query(Lead).all()
+
+    for l in leads:
+        db.session.delete(l)
+    flask_migrate.upgrade()
+    db.session.commit()
+    flash("deleted")
+    return redirect(url_for("index.page"))

@@ -45,7 +45,7 @@ class Lead(BaseMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     first_name = db.Column(db.String(200))
     last_name = db.Column(db.String(200))
-    age = db.Column(db.Integer)  # just added
+    age = db.Column(db.String(30))  # just added
     address = db.Column(db.String(200))
     city = db.Column(db.String(200))
     state = db.Column(db.String(200))
