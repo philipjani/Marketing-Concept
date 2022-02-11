@@ -16,6 +16,10 @@ leads = Blueprint("leads", __name__)
 @leads.route("/leads", methods=["POST", "GET"])
 @login_required
 def main():
+    with db_session():
+        for L in Lead.query.all():
+            if L.age == "-1":
+                L.age = "None"
     print(f'Lead.query.get(29681): {Lead.query.get(29681)}')
     filter_form = FilterForm()
     lead_form = LeadForm()

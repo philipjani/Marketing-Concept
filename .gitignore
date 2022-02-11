@@ -1,5 +1,7 @@
 *.pyc
 *__pycache__
+*/__pycache__
 MC
 .env
 /project/stash.py
+latest.dump
