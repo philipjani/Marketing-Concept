@@ -17,27 +17,19 @@ def main(selected):
     symbols = ["["," ","'",",","]"]
     sel = []
     tmp = ""
-    print(f'len(selected): {len(selected)}')
-    print(f'type(selected: {type(selected)}')
     for s in selected:
-        print(f'top.s: {s}')
         if s in symbols:
-            print(f's: {s}')
             if tmp != "":
                 sel.append(int(tmp))
                 tmp = ""
         else:
             tmp += s
 
-    # if len(tmp) > 0
     try:
         sel.append(int(tmp))
     except Exception:
         pass
-    print(f'sel: {sel}')
     amount = len(sel)
-    # for id_ in selected:
-    #     classes.append(Lead.query.filter_by(id=id_).first())
     templates = Template.query.all()
     if request.method == "GET":
         return render_template(
@@ -61,7 +53,6 @@ def confirm(selected, temp_id):
     tmp = ""
     for s in selected:
         if s in symbols:
-            print(f's: {s}')
             if tmp != "":
                 sel.append(int(tmp))
                 tmp = ""
@@ -71,32 +62,23 @@ def confirm(selected, temp_id):
         sel.append(int(tmp))
     except Exception:
         pass
-    print(f'sel: {sel}')
     amount = len(sel)
     example = Lead.query.filter_by(id=sel[0]).first()
     form_confirm = ConfirmForm()
     template = Template.query.filter_by(id=temp_id).first()
     if request.method == "POST":
-        print(f'here')
-        print(f'sel: {sel}')
         messages = []
         for id_ in sel:
-            print(f'id_: {id_}')
             recipient = Lead.query.filter_by(id=id_).first()
-            print(f'recipient: {recipient}')
             for p in recipient.mobile_phones:
-                print(f'p: {p}')
                 text = translate(recipient, template.message)
                 messages.append({"number": p.mobile_phone, "message": text})
                 
-            print(f"messages: {messages}")
         fail = 0
         for m in messages:
             try:
-                # pass
                 send(m)
             except Exception as e:
-                print(e)
                 fail += 1
         if fail > 0:
             flash(
@@ -115,12 +97,10 @@ def confirm(selected, temp_id):
 
 
 def send(message):
-    print(f'message: {message} || type(message): {type(message)}')
     if os.environ.get("_HEROKU_HOSTING"):
         webhook = os.getenv("WEBHOOK")
     else:
         webhook = "http://4bc3-72-228-49-124.ngrok.io/textreply"
-    print(f'webhook: {webhook}')
     r = requests.post(
         "https://textbelt.com/text",
         {
@@ -134,7 +114,6 @@ def send(message):
             "replyWebhookUrl": webhook,
         },
     )
-    print(f'r: {r.json()}')
 
 
 def translate(target, template: str) -> str:

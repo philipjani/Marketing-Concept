@@ -16,11 +16,6 @@ leads = Blueprint("leads", __name__)
 @leads.route("/leads", methods=["POST", "GET"])
 @login_required
 def main():
-    with db_session():
-        for L in Lead.query.all():
-            if L.age == "-1":
-                L.age = "None"
-    print(f'Lead.query.get(29681): {Lead.query.get(29681)}')
     filter_form = FilterForm()
     lead_form = LeadForm()
     apply_form = ApplyForm()
@@ -36,41 +31,29 @@ def main():
     if request.method == "POST":
         with db_session(autocommit=False) as sess:
             selected = request.form.getlist("select")
-            print(f'selected: {selected}')
             if filter_form.filter_submit.data:
                 column = filter_form.comp_select.data
                 data = filter_form.info.data
                 rows = filter_form.length.data
                 leads_ = filter(column, data, rows)
-                # print(f'leads_1: {leads_}')
             if lead_form.lead_submit.data:
-                # leads_ = retrieve_selected_leads(db, selected)
-                # print(f'leads_2: {leads_}')
-
                 skipped_int = 0
                 success = 0
                 final_msg = ''
                 ids = [int(i) for i in selected]
                 leads_ = db.session.query(Lead).filter(Lead.id.in_(ids)).all()
-                print(f'leads_: {leads_}')
-                # return redirect(url_for("index.page"))
                 for lead in leads_:
-                    print(f'lead3: {lead}')
                     #     # API call does not work without first name, OR if already have phone/emails
                     if not lead.first_name:
-                        print(f'no first')
                         skipped_int += 1
                         final_msg += f'skipping "{lead.first_name} {lead.last_name}" due to lack of information<br>'
                         continue
                     if lead.mobile_phones or lead.emails:
-                        print(f'no phone/email')
                         skipped_int += 1
                         final_msg += f'skipping "{lead.first_name} {lead.last_name}" due to already having phone/email<br>'
                         continue
-                    print(f'lead.last_trace: {lead.last_trace}')
                     if lead.last_trace is not None:
                         skipped_int += 1
-                        print(f'trace_date not none')
                         final_msg += f'skipping "{lead.first_name} {lead.last_name}" due already being traced<br>'
                         continue
                     lead_dict = get_lead_dict(lead)
@@ -125,17 +108,6 @@ def render(lead_form, leads_, filter_form, apply_form):
         apply_form=apply_form,
     )
 
-# def to_flash(msg):
-
-# def convert_lead_ids_to_ints(lead_ids):
-#     print(f'lead_ids: {lead_ids}')
-#     ints_selected = [int(i) for i in lead_ids]
-#     # for id_num in lead_ids:
-#     #     ints_selected.append(int(id_num))
-#     tuple_selected = tuple(ints_selected)
-#     return tuple_selected
-
-
 def extract_info_from_person_data(person_data):
     age = (
         person_data["person"]["age"]
@@ -186,14 +158,6 @@ def update_person_db(db, lead, age, mobile_phones, emails, session):
     lead.age = age
     lead.last_trace = datetime.utcnow()
 
-
-# def retrieve_selected_leads(db, lead_ids):
-#     # tuple_selected = convert_lead_ids_to_ints(lead_ids)
-
-#     leads = db.session.query(Lead).filter(Lead.id.in_([int(i) for i in lead_ids])).all()
-#     return leads
-
-
 def get_lead_dict(lead):
     lead_dict = {
         "FirstName": lead.first_name,
@@ -205,9 +169,6 @@ def get_lead_dict(lead):
     }
     return lead_dict
 
-
-# Added by Dylan
-# changed by Zack
 def filter(category, query_string, rows):
     page = request.args.get("page", 1, type=int)
     leads = (

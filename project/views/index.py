@@ -31,7 +31,6 @@ index = Blueprint("index", __name__)
 @index.route("/", methods=["GET", "POST"])
 @login_required
 def page():
-    # print(f'Lead.query.all(): {Lead.query.all()}')
     if request.method == "POST":
         f = request.files["file"]
         if f.filename != "":
@@ -41,7 +40,7 @@ def page():
                 df.to_sql("lead", con, if_exists="append", index=False)
                 flash("csv uploaded successfully")
             except Exception as e:
-                print(f"e: {e}")(e)
+                flash(f"e: {e}")
     return render_template("index.html")
 
 @index.route("/delete")
@@ -87,20 +86,3 @@ def dump_to_csv():
     return send_file(
         folder, attachment_filename="Marketing_Concept_dumps.zip", as_attachment=True
     )
-
-
-# import flask_migrate
-# from flask import redirect, url_for
-
-
-# @index.route("/convert")
-# @login_required
-# def convert():
-#     leads = db.session.query(Lead).all()
-
-#     for l in leads:
-#         db.session.delete(l)
-#     flask_migrate.upgrade()
-#     db.session.commit()
-#     flash("deleted")
-#     return redirect(url_for("index.page"))

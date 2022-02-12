@@ -8,4 +8,3 @@ def dump_to_csv(table, db):
         for curr in records:
             for column in table.__mapper__.columns:
                 outcsv.writerow(getattr(curr, column.name))
-                # print(getattr(curr, column.name))

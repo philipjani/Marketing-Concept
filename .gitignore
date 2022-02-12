@@ -5,3 +5,5 @@ MC
 .env
 /project/stash.py
 latest.dump
+/ignored
+testing.py

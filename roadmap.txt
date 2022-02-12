@@ -47,7 +47,7 @@ parse responses.
 new todo:
 make export csv button - Done
 make csv upload work with exported csv's
-change Lead.age to be a string so that it works with desceased and null
+change Lead.age to be a string so that it works with desceased and null - done
 select by amount of leads to be traced. ie: type in 1000 to trace the first 1000 results
 apply ability to manually remove/add/edit rows
 syntax highlighting for templates
