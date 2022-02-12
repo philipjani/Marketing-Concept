@@ -31,11 +31,13 @@ def main():
     if request.method == "POST":
         with db_session(autocommit=False) as sess:
             selected = request.form.getlist("select")
+            print(f'selected: {selected}')
             if filter_form.filter_submit.data:
                 column = filter_form.comp_select.data
                 data = filter_form.info.data
                 rows = filter_form.length.data
                 leads_ = filter(column, data, rows)
+                return render(lead_form, leads_, filter_form, apply_form)
             if lead_form.lead_submit.data:
                 skipped_int = 0
                 success = 0
