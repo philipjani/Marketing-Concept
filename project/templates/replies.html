@@ -10,6 +10,7 @@
     {% for reply in replies %}
     {{ reply.additional["last_name"] }}, {{ reply.additional["first_name"] }} ({{ reply.additional["number"] }}) ||| {{ reply.message }} {{ reply.contact_time }} || {{ reply.additional["address"] }} {{ reply.additional["city"] }} {{ reply.additional["state"] }} {{ reply.additional["zip"] }} ||| {{ reply.additional["property_type"] }} {{ reply.additional["mls_status"] }} {{ reply.additional["template_sent"] }}<br>
         <!-- address, city, state, zip, first, last, property type, mls status, template if I can -->
+        <!-- first, last, phone, message, date (01/02/31), time (12 hour clock), property type, mls status, template if I can-->
     {% endfor %}
 {% endif %}
 
