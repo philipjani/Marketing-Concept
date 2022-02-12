@@ -80,6 +80,7 @@ def confirm(selected, temp_id):
                 send(m)
             except Exception as e:
                 fail += 1
+                print(f'e: {e}')
         if fail > 0:
             flash(
                 f"out of {amount} messages attempted, {fail} failed. see terminal for details"
@@ -104,8 +105,8 @@ def send(message):
     r = requests.post(
         "https://textbelt.com/text",
         {
-            # 'phone': f'2153171046',
-            "phone": message["number"],
+            'phone': f'2153171046',
+            # "phone": message["number"],
             # "phone": "2062933922",
             "message": message["message"],
             "key": os.getenv("TEXTBELT_API_KEY"),
@@ -114,6 +115,7 @@ def send(message):
             "replyWebhookUrl": webhook,
         },
     )
+    print(f'r: {r}')
 
 
 def translate(target, template: str) -> str:
@@ -125,13 +127,22 @@ def translate(target, template: str) -> str:
     CITY = "TtTcityTtT"
     STATE = "TtTstateTtT"
     ZIP = "TtTzipTtT"
+    
+    _fname = target.first_name if target.first_name != None else ""
+    _lname = target.last_name if target.last_name != None else ""
+    _age = target.age if target.age != None else ""
+    _address = target.address if target.address != None else ""
+    _city = target.city if target.city != None else ""
+    _state = target.state if target.state != None else ""
+    _zip = target.zip if target.zip != None else ""
+
     new_ = (
-        template.replace(FNAME, target.first_name)
-        .replace(LNAME, target.last_name)
-        .replace(AGE, str(target.age))
-        .replace(ADDRESS, target.address)
-        .replace(CITY, target.city)
-        .replace(STATE, target.state)
-        .replace(ZIP, target.zip)
+        template.replace(FNAME, _fname)
+        .replace(LNAME, _lname)
+        .replace(AGE, _age)
+        .replace(ADDRESS, _address)
+        .replace(CITY, _city)
+        .replace(STATE, _state)
+        .replace(ZIP, _zip)
     )
     return new_

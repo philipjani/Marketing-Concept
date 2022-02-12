@@ -86,18 +86,18 @@ def main():
                     .order_by(Lead.id)
                     .paginate(page=page, per_page=10)
                 )
-                if apply_form.apply_submit.data:
-                    if selected:
-                        return redirect(url_for("apply.main", selected=selected))
-                    else:
-                        return redirect(url_for("leads.main"))
-                return render(trace_form, leads_, filter_form, apply_form)
+            if apply_form.apply_submit.data:
+                if selected:
+                    return redirect(url_for("apply.main", selected=selected))
+                else:
+                    return redirect(url_for("leads.main"))
+            return render(trace_form, leads_, filter_form, apply_form)
     if request.method == "GET":
         page = request.args.get("page", 1, type=int)
         leads_ = (
             db.session.query(Lead).order_by(Lead.id).paginate(page=page, per_page=10)
         )
-    return render(trace_form, leads_, filter_form, apply_form)
+        return render(trace_form, leads_, filter_form, apply_form)
 
 
 def render(lead_form, leads_, filter_form, apply_form):
