@@ -26,11 +26,11 @@
     <tbody>
         {% for reply in replies %}
       <tr>
-        <th scope="row">{{ reply.id }}</th>
+        <th scope="row">{{ reply["id"] }}</th>
         <td>{{ reply["first_name"] }}</td>
         <td>{{ reply["last_name"] }}</td>
         <td>{{ reply["number"] }}</td>
-        <td>{{ reply.message }}</td>
+        <td>{{ reply["message"] }}</td>
         <td>{{ reply["address"] }}, {{ reply["city"] }} {{ reply["state"] }} {{ reply["zip"] }}</td>
         <td>{{ reply["date"] }}</td>
         <td>{{ reply["time"] }}</td>

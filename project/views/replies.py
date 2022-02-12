@@ -17,6 +17,8 @@ def main():
         lead = Lead.query.get(num.lead_id)
         replies.append(
             {"address": lead.address,
+                "id": r.id,
+                "message": r.message,
                 "city": lead.city,
                 "state": lead.state,
                 "zip": lead.zip,
