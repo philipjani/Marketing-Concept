@@ -7,11 +7,40 @@
 {% block body %}
 
 {% if replies %}
-    {% for reply in replies %}
-    {{ reply.additional["last_name"] }}, {{ reply.additional["first_name"] }} ({{ reply.additional["number"] }}) ||| {{ reply.message }} {{ reply.contact_time }} || {{ reply.additional["address"] }} {{ reply.additional["city"] }} {{ reply.additional["state"] }} {{ reply.additional["zip"] }} ||| {{ reply.additional["property_type"] }} {{ reply.additional["mls_status"] }} {{ reply.additional["template_sent"] }}<br>
-        <!-- address, city, state, zip, first, last, property type, mls status, template if I can -->
-        <!-- first, last, phone, message, date (01/02/31), time (12 hour clock), property type, mls status, template if I can-->
-    {% endfor %}
+<table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Phone Number</th>
+        <th scope="col">Message</th>
+        <th scope="col">Address</th>
+        <th scope="col">Date</th>
+        <th scope="col">Time</th>
+        <th scope="col">Property Type</th>
+        <th scope="col">MLS Status</th>
+        <th scope="col">Template Used</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for reply in replies %}
+      <tr>
+        <th scope="row">{{ reply.id }}</th>
+        <td>{{ reply.additional["first_name"] }}</td>
+        <td>{{ reply.additional["last_name"] }}</td>
+        <td>{{ reply.additional["number"] }}</td>
+        <td>{{ reply.message }}</td>
+        <td>{{ reply.additional["address"] }}, {{ reply.additional["city"] }} {{ reply.additional["state"] }} {{ reply.additional["zip"] }}</td>
+        <td>{{ reply.additional["date"] }}</td>
+        <td>{{ reply.additional["time"] }}</td>
+        <td>{{ reply.additional["property_type"] }}</td>
+        <td>{{ reply.additional["mls_status"] }}</td>
+        <td>{{ reply.additional["template_sent"] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endif %}
 
 {% endblock %}

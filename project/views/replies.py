@@ -1,7 +1,7 @@
 
-from flask import Blueprint, request, redirect, url_for, render_template, flash
+from flask import Blueprint, render_template
 from flask_login import login_required
-
+import pytz
 from project.models import Phone_Number, TextReply, Lead
 
 replies = Blueprint("replies", __name__)
@@ -23,4 +23,16 @@ def main():
         r.additional["mls_status"] = lead.mls_status
         r.additional["template_sent"] = lead.template_sent
         r.additional["number"] = num.mobile_phone
+        r.additional["date"] = convert_date(r.contact_time)
+        r.additional["time"] = convert_time(r.contact_time)
     return render_template("replies.html", replies=replies)
+
+def convert_date(time):
+    est = pytz.timezone('US/Eastern')
+    fmt = "%I:%M %p"
+    return time.astimezone(est).strftime(fmt)
+    
+def convert_time(time):
+    est = pytz.timezone('US/Eastern')
+    fmt = "%I:%M %p"
+    return time.astimezone(est).strftime(fmt)

@@ -2,6 +2,8 @@ from flask import Blueprint, request, redirect, url_for, render_template, flash
 from flask_login import login_required
 import os
 import requests
+
+from project.helpers.db_session import db_session
 from project.forms import ConfirmForm
 from project.models import Template
 from project.models import Lead
@@ -67,13 +69,15 @@ def confirm(selected, temp_id):
     form_confirm = ConfirmForm()
     template = Template.query.filter_by(id=temp_id).first()
     if request.method == "POST":
+
         messages = []
         for id_ in sel:
-            recipient = Lead.query.filter_by(id=id_).first()
-            for p in recipient.mobile_phones:
-                text = translate(recipient, template.message)
-                messages.append({"number": p.mobile_phone, "message": text})
-                
+            with db_session():
+                recipient = Lead.query.filter_by(id=id_).first()
+                for p in recipient.mobile_phones:
+                    text = translate(recipient, template.message)
+                    messages.append({"number": p.mobile_phone, "message": text})
+                recipient.template_sent = text
         fail = 0
         for m in messages:
             try:
@@ -115,7 +119,6 @@ def send(message):
             "replyWebhookUrl": webhook,
         },
     )
-    print(f'r: {r}')
 
 
 def translate(target, template: str) -> str:
