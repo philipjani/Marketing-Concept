@@ -81,6 +81,7 @@ class TextReply(BaseMixin, db.Model):
     message = db.Column(db.String(2000), nullable=False)
     contact_time = db.Column(db.DateTime)
     phone_id = db.Column(db.Integer, db.ForeignKey("phone_number.id"))
+    additional = {}
 
 
 class Email(BaseMixin, db.Model):
