@@ -29,7 +29,7 @@ def main():
 
 def convert_date(time):
     est = pytz.timezone('US/Eastern')
-    fmt = "%I:%M %p"
+    fmt = "%m-%d-%Y"
     return time.astimezone(est).strftime(fmt)
     
 def convert_time(time):
