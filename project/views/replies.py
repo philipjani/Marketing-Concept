@@ -22,4 +22,5 @@ def main():
         r.additional["property_type"] = lead.property_type
         r.additional["mls_status"] = lead.mls_status
         r.additional["template_sent"] = lead.template_sent
+        r.additional["number"] = num.mobile_phone
     return render_template("replies.html", replies=replies)
