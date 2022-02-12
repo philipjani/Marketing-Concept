@@ -7,12 +7,16 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
+from flask_admin import Admin
+from project.views.admin import AdminIndex
 
 from project.helpers.flask_login import config as config_fl
 from project.blueprints import init_blueprints
 from project.helpers.populate_users import check_and_populate
+from project.helpers.flask_admin import init_admin
 
 db = SQLAlchemy()
+admin = Admin(name="marketing_concept", template_mode="bootstrap3")
 migrate_ = Migrate()
 socketio = SocketIO(cors_allowed_origins="*")
 login_manager = config_fl()
@@ -29,7 +33,9 @@ def create_app(test_config=None):
         init_blueprints(app)
         login_manager.init_app(app)
         socketio.init_app(app)
-
+        init_admin(admin, db)
+        admin.init_app(app, AdminIndex())
+        
         return app
     except Exception as e:
         print(f'e: {e}')

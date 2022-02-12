@@ -17,7 +17,7 @@ leads = Blueprint("leads", __name__)
 @login_required
 def main():
     filter_form = FilterForm()
-    lead_form = LeadForm()
+    trace_form = LeadForm()
     apply_form = ApplyForm()
     filter_form.comp_select.choices = [
         "last_name",
@@ -30,15 +30,14 @@ def main():
 
     if request.method == "POST":
         with db_session(autocommit=False) as sess:
-            selected = request.form.getlist("select")
-            print(f'selected: {selected}')
             if filter_form.filter_submit.data:
                 column = filter_form.comp_select.data
                 data = filter_form.info.data
                 rows = filter_form.length.data
                 leads_ = filter(column, data, rows)
-                return render(lead_form, leads_, filter_form, apply_form)
-            if lead_form.lead_submit.data:
+                return render(trace_form, leads_, filter_form, apply_form)
+            selected = request.form.getlist("select")
+            if trace_form.lead_submit.data:
                 skipped_int = 0
                 success = 0
                 final_msg = ''
@@ -92,13 +91,13 @@ def main():
                         return redirect(url_for("apply.main", selected=selected))
                     else:
                         return redirect(url_for("leads.main"))
-                return render(lead_form, leads_, filter_form, apply_form)
+                return render(trace_form, leads_, filter_form, apply_form)
     if request.method == "GET":
         page = request.args.get("page", 1, type=int)
         leads_ = (
             db.session.query(Lead).order_by(Lead.id).paginate(page=page, per_page=10)
         )
-    return render(lead_form, leads_, filter_form, apply_form)
+    return render(trace_form, leads_, filter_form, apply_form)
 
 
 def render(lead_form, leads_, filter_form, apply_form):
