@@ -68,6 +68,7 @@ def confirm(selected, temp_id):
     example = Lead.query.filter_by(id=sel[0]).first()
     form_confirm = ConfirmForm()
     template = Template.query.filter_by(id=temp_id).first()
+    m = template.message
     if request.method == "POST":
 
         # messages = []
@@ -76,7 +77,7 @@ def confirm(selected, temp_id):
             with db_session():
                 recipient = Lead.query.filter_by(id=id_).first()
                 for p in recipient.mobile_phones:
-                    text = translate(recipient, template.message)
+                    text = translate(recipient, m)
                 try:
                     send({"number": p.mobile_phone, "message": text})
                 except Exception as e:
