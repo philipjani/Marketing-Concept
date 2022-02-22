@@ -151,11 +151,15 @@ def get_pf_api_data(lead_dict):
 def update_person_db(db, lead, age, mobile_phones, emails, session):
     # Insert all phone numbers of lead into phone numbers table
     for phone in mobile_phones:
-        new = Phone_Number(mobile_phone=phone, lead_id=lead.id)
-        session.add(new)
+        p_exists = Phone_Number.query.filter_by(mobile_phone = phone).first()
+        if p_exists is None:
+            new = Phone_Number(mobile_phone=phone, lead_id=lead.id)
+            session.add(new)
     for email in emails:
-        new = Email(email_address=email, lead_id=lead.id)
-        session.add(new)
+        e_exists = Email.query.filter_by(email_address=email).first()
+        if e_exists is None:
+            new = Email(email_address=email, lead_id=lead.id)
+            session.add(new)
     lead.age = age
     lead.last_trace = datetime.utcnow()
 

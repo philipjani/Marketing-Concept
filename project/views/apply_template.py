@@ -68,23 +68,30 @@ def confirm(selected, temp_id):
     example = Lead.query.filter_by(id=sel[0]).first()
     form_confirm = ConfirmForm()
     template = Template.query.filter_by(id=temp_id).first()
+    m = template.message
     if request.method == "POST":
 
-        messages = []
+        # messages = []
+        fail = 0
         for id_ in sel:
             with db_session():
                 recipient = Lead.query.filter_by(id=id_).first()
                 for p in recipient.mobile_phones:
-                    text = translate(recipient, template.message)
-                    messages.append({"number": p.mobile_phone, "message": text})
+                    text = translate(recipient, m)
+                try:
+                    send({"number": p.mobile_phone, "message": text})
+                except Exception as e:
+                    fail += 1
+                    print(f'e: {e}')
+                    # messages.append({"number": p.mobile_phone, "message": text})
                 recipient.template_sent = text
-        fail = 0
-        for m in messages:
-            try:
-                send(m)
-            except Exception as e:
-                fail += 1
-                print(f'e: {e}')
+        
+        # for m in messages:
+        #     try:
+        #         send(m)
+        #     except Exception as e:
+        #         fail += 1
+        #         print(f'e: {e}')
         if fail > 0:
             flash(
                 f"out of {amount} messages attempted, {fail} failed. see terminal for details"
