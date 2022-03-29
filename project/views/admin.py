@@ -5,15 +5,22 @@ from flask_admin import AdminIndexView, expose
 class AdminIndex(AdminIndexView):
     @expose('/', methods=["GET", "POST"])
     def index(self):
+        from project.models import Lead
 
-        from project.forms import ProperyType
+        from project.forms import ProperyType, MLSStatus
         if current_user.is_anonymous:
             return redirect(url_for("index.page"))
-        form = ProperyType()
+        property_type = ProperyType(prefix="propertytype")
+        mls = MLSStatus(prefix="mlsstatus")
+        mls_amount = len(Lead.query.filter_by(mls_status="PENDING").all())
         if request.method == "POST":
-            remove_matches(form.types.data)
-        form.types.choices = get_choices()
-        return self.render('admin/index.html', form=form)
+            if property_type.submit.data:
+                remove_property_type(property_type.types.data)
+            elif mls.submit.data:
+                remove_mls()
+                mls_amount = len(Lead.query.filter_by(mls_status="PENDING").all())
+        property_type.types.choices = get_choices()
+        return self.render('admin/index.html', property_type=property_type, mls=mls, mls_amount=mls_amount)
 
 def get_choices():
     from project.models import Lead
@@ -23,7 +30,19 @@ def get_choices():
         types.add(L.property_type)
     return list(types)
 
-def remove_matches(to_remove:list):
+def remove_mls():
+    from project.models import Lead
+    from project.helpers.db_session import db_session
+
+    with db_session() as sess:
+        to_delete = Lead.query.filter_by(mls_status="PENDING").all()
+        count = len(to_delete)
+        for rem in to_delete:
+            sess.delete(rem)
+        flash(f"deleted {count} Leads") if count > 0 else flash("nothing to delete")
+
+
+def remove_property_type(to_remove:list):
     from project.models import Lead
     from project.helpers.db_session import db_session
     with db_session() as sess:
@@ -33,4 +52,4 @@ def remove_matches(to_remove:list):
             count += len(removing)
             for r in removing:
                 sess.delete(r)
-        flash(f"deleted {count} Leads")
+        flash(f"deleted {count} Leads") if count > 0 else flash("nothing to delete")

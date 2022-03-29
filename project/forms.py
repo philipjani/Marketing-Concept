@@ -25,8 +25,10 @@ class MultiCheckboxField(SelectMultipleField):
 
 class ProperyType(FlaskForm):
     types = MultiCheckboxField("current_types")
-    submit = SubmitField("Remove")
+    submit = SubmitField("Remove Pending")
 
+class MLSStatus(FlaskForm):
+    submit = SubmitField("Remove")
 
 class LeadForm(FlaskForm):
     select = BooleanField()

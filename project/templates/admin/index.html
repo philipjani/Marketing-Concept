@@ -1,11 +1,16 @@
 {% extends 'admin/master.html' %}
 {% block body %}
   <a href="/">Back</a>
-  <h5 class="modal-title" >Remove Leads from Database by property type</h5><br>
   <form method="POST">
-    {{form.hidden_tag()}}
-    {{form.types.label}}
-    {{form.types}}
-    {{form.submit}}
+      <h2>Remove {{mls_amount}} Leads with MLS Status: "Pending":</h2>
+      {{mls.submit}}
     </form>
+    <h2 class="modal-title" >Remove Leads from Database by property type</h2><br>
+  <form method="POST">
+    {{property_type.hidden_tag()}}
+    {{property_type.types.label}}
+    {{property_type.types}}
+    {{property_type.submit}}
+    </form>
+    
 {% endblock %}
