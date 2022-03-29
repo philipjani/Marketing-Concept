@@ -1,16 +1,20 @@
 {% extends 'admin/master.html' %}
 {% block body %}
-  <a href="/">Back</a>
-  <form method="POST">
-      <h2>Remove {{mls_amount}} Leads with MLS Status: "Pending":</h2>
-      {{mls.submit}}
-    </form>
-    <h2 class="modal-title" >Remove Leads from Database by property type</h2><br>
-  <form method="POST">
+<a href="/">Back</a>
+<form method="POST">
+    <h2>Remove {{mls_amount}} Leads with MLS Status: "Pending":</h2>
+    {{mls.submit}}
+</form>
+<form method="POST">
+    <h2>Remove {{llcs_amount}} Leads with "LLC" in first or last name:</h2>
+    {{llc.submit}}
+</form>
+<h2 class="modal-title">Remove Leads from Database by property type</h2><br>
+<form method="POST">
     {{property_type.hidden_tag()}}
     {{property_type.types.label}}
     {{property_type.types}}
     {{property_type.submit}}
-    </form>
-    
+</form>
+
 {% endblock %}

@@ -1,4 +1,5 @@
 
+from flask import Flask
 from flask_wtf import FlaskForm
 
 from wtforms import widgets
@@ -23,12 +24,15 @@ class MultiCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
     option_widget = widgets.CheckboxInput()
 
-class ProperyType(FlaskForm):
+class RemoveProperyType(FlaskForm):
     types = MultiCheckboxField("current_types")
+    submit = SubmitField("Remove Property Type")
+
+class RemoveMLSPending(FlaskForm):
     submit = SubmitField("Remove Pending")
 
-class MLSStatus(FlaskForm):
-    submit = SubmitField("Remove")
+class RemoveLLC(FlaskForm):
+    submit = SubmitField("Remove LLC")
 
 class LeadForm(FlaskForm):
     select = BooleanField()
