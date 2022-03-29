@@ -13,6 +13,7 @@ from project.models import Lead, Phone_Number, Email
 leads = Blueprint("leads", __name__)
 
 
+
 @leads.route("/leads", methods=["POST", "GET"])
 @login_required
 def main():

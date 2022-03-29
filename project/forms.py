@@ -2,7 +2,7 @@
 from flask_wtf import FlaskForm
 
 from wtforms import widgets
-from wtforms.fields.choices import SelectField, SelectMultipleField
+from wtforms.fields.choices import SelectField, SelectMultipleField, RadioField
 from wtforms.fields.numeric import IntegerField
 from wtforms.fields.simple import BooleanField, StringField, SubmitField, TextAreaField, PasswordField
 from wtforms.widgets.core import TextArea
@@ -19,17 +19,18 @@ class FilterForm(FlaskForm):
     info = StringField("Enter Filter Query")
     filter_submit = SubmitField("Go")
 
-# class MultiCheckboxField(SelectMultipleField):
-#     widget = widgets.TableWidget()
-#     option_widget = widgets.CheckboxInput()
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
+
+class ProperyType(FlaskForm):
+    types = MultiCheckboxField("current_types")
+    submit = SubmitField("Remove")
+
 
 class LeadForm(FlaskForm):
     select = BooleanField()
     lead_submit = SubmitField("Skiptrace Leads")
-
-# class TestForm(FlaskForm):
-#     select = MultiCheckboxField('select')
-#     test_submit = SubmitField("Skiptrace Leads")
 
 class TemplateForm(FlaskForm):
     name = StringField("Name of Template")

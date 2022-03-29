@@ -66,6 +66,7 @@ class Lead(BaseMixin, db.Model):
     last_trace = db.Column(db.DateTime)
 
 
+
 class Phone_Number(BaseMixin, db.Model):
     __tablename__ = "phone_number"
     id = db.Column(db.Integer, primary_key=True)
