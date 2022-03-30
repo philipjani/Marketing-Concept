@@ -84,7 +84,7 @@ def confirm(selected, temp_id):
                     fail += 1
                     print(f'e: {e}')
                     # messages.append({"number": p.mobile_phone, "message": text})
-                recipient.template_sent = text
+                recipient.template_sent = template.name
         
         # for m in messages:
         #     try:
