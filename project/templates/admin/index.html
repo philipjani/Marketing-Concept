@@ -1,6 +1,7 @@
 {% extends 'admin/master.html' %}
 {% block body %}
-<a href="/">Back</a>
+<button class="btn btn-secondary"><a href="/">Home</a></button>
+
 <form method="POST">
     <h2>Remove {{mls_amount}} Leads with MLS Status: "Pending":</h2>
     {{mls.submit}}
