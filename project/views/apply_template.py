@@ -130,13 +130,13 @@ def send(message):
 
 def translate(target, template: str) -> str:
     """replaces custom variables with values from the database"""
-    FNAME = "TtTfnameTtT"
-    LNAME = "TtTlnameTtT"
-    AGE = "TtTageTtT"
-    ADDRESS = "TtTaddressTtT"
-    CITY = "TtTcityTtT"
-    STATE = "TtTstateTtT"
-    ZIP = "TtTzipTtT"
+    FNAME = "|First_Name|"
+    LNAME = "|Last_Name|"
+    AGE = "|Age|"
+    ADDRESS = "|Address|"
+    CITY = "|City|"
+    STATE = "|State|"
+    ZIP = "|zip|"
     
     _fname = target.first_name if target.first_name != None else ""
     _lname = target.last_name if target.last_name != None else ""

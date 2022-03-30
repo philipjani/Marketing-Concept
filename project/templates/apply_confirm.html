@@ -8,13 +8,13 @@ f{% extends 'base.html' %}
 {% block body %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const FNAME = "TtTfnameTtT";
-        const LNAME = "TtTlnameTtT";
-        const AGE = "TtTageTtT";
-        const ADDRESS = "TtTaddressTtT";
-        const CITY = "TtTcityTtT";
-        const STATE = "TtTstateTtT";
-        const ZIP = "TtTzipTtT";
+        const FNAME = "|First_Name|";
+        const LNAME = "|Last_Name|";
+        const AGE = "|Age|";
+        const ADDRESS = "|Address|";
+        const CITY = "|City|";
+        const STATE = "|State|";
+        const ZIP = "|zip|";
         const message = document.querySelector("p[data-flag='tmess']");
         const template = message.innerHTML;
         let new_ = template.replace(FNAME, '{{ example.first_name }}')

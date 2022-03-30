@@ -6,43 +6,43 @@ document.addEventListener("DOMContentLoaded", function () {
     .querySelector("button[data-flag='fname']")
     .addEventListener("click", (e) => {
       e.preventDefault();
-      add_var("TtTfnameTtT");
+      add_var("|First_Name|");
     });
   document
     .querySelector("button[data-flag='lname']")
     .addEventListener("click", (e) => {
       e.preventDefault();
-      add_var("TtTlnameTtT");
+      add_var("|Last_Name|");
     });
   document
     .querySelector("button[data-flag='age']")
     .addEventListener("click", (e) => {
       e.preventDefault();
-      add_var("TtTageTtT");
+      add_var("|Age|");
     });
   document
     .querySelector("button[data-flag='address']")
     .addEventListener("click", (e) => {
       e.preventDefault();
-      add_var("TtTaddressTtT");
+      add_var("|Address|");
     });
   document
     .querySelector("button[data-flag='city']")
     .addEventListener("click", (e) => {
       e.preventDefault();
-      add_var("TtTcityTtT");
+      add_var("|City|");
     });
   document
     .querySelector("button[data-flag='state']")
     .addEventListener("click", (e) => {
       e.preventDefault();
-      add_var("TtTstateTtT");
+      add_var("|State|");
     });
   document
     .querySelector("button[data-flag='zip']")
     .addEventListener("click", (e) => {
       e.preventDefault();
-      add_var("TtTzipTtT");
+      add_var("|zip|");
     });
 
   // get caret location listeners
