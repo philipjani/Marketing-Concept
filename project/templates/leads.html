@@ -37,9 +37,9 @@
             {{ filter_form.length (class="form-control", value="20") }}
         </div>
         {{ filter_form.filter_submit (class="btn btn-secondary", style="margin-top: 10px;") }}
+        <a class="btn btn-secondary", style="margin-top: 10px;", href="{{url_for('leads.clear')}}">Clear Filter</a>
     </div>
 </form>
-
 <span style="float: right;">Select All  <input class="form-check-input" type="checkbox"  id='updateme' onClick="toggle(this)"/></span><br/>
 
 <div class="table-responsive">
@@ -110,7 +110,7 @@
                 {% endif %}
             {% endfor %}
         </table>
-        {{ apply_form.apply_submit (class="btn btn-secondary", data_flag="template_button")}}
+        {{ apply_form.apply_submit (class="btn btn-secondary", style="margin-bottom: 10px;", data_flag="template_button")}}
         {{ lead_form.lead_submit (class="btn btn-secondary", style="margin-bottom: 10px;") }}
     </form>
 </div>

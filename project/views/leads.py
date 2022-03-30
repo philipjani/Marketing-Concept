@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Blueprint, request, redirect, url_for, render_template, flash
+from flask import Blueprint, request, redirect, url_for, render_template, flash, session
 from flask_login import login_required
 import json
 import os
@@ -36,6 +36,7 @@ def main():
                 data = filter_form.info.data
                 rows = filter_form.length.data
                 leads_ = filter(column, data, rows)
+                session["filtered"] = {"column": column, "data": data, "rows": rows}
                 return render(trace_form, leads_, filter_form, apply_form)
             selected = request.form.getlist("select")
             if trace_form.lead_submit.data:
@@ -80,7 +81,6 @@ def main():
                     flash(
                         "There was an error inserting API data into database."
                     )
-                    print(e)
                 page = request.args.get("page", 1, type=int)
                 leads_ = (
                     db.session.query(Lead)
@@ -95,10 +95,24 @@ def main():
             return render(trace_form, leads_, filter_form, apply_form)
     if request.method == "GET":
         page = request.args.get("page", 1, type=int)
-        leads_ = (
-            db.session.query(Lead).order_by(Lead.id).paginate(page=page, per_page=10)
-        )
+        try:
+            leads_ = filter(
+                session["filtered"]["column"], session["filtered"]["data"], session["filtered"]["rows"]
+            )
+        except KeyError:
+            leads_ = (
+                db.session.query(Lead).order_by(Lead.id).paginate(page=page, per_page=10)
+            )
+
         return render(trace_form, leads_, filter_form, apply_form)
+
+@leads.route("/leads/clear", methods=["GET"])
+def clear():
+    try:
+        session.pop("filtered")
+    except KeyError:
+        pass
+    return redirect(url_for('leads.main'))
 
 
 def render(lead_form, leads_, filter_form, apply_form):
@@ -175,7 +189,7 @@ def get_lead_dict(lead):
     }
     return lead_dict
 
-def filter(category, query_string, rows):
+def filter(category:str, query_string:str, rows:int):
     page = request.args.get("page", 1, type=int)
     leads = (
         db.session.query(Lead)

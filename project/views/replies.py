@@ -10,7 +10,6 @@ replies = Blueprint("replies", __name__)
 @login_required
 def main():
     _replies = TextReply.query.all()
-    print(f"replies: {_replies}")
     replies = []
     for r in _replies:
         num = Phone_Number.query.get(r.phone_id)

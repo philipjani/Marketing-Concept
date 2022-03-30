@@ -50,7 +50,6 @@ def get_llcs():
     llcs = []
     for rem in all:
         if rem.first_name and "llc" in rem.first_name.lower() or "llc" in rem.last_name.lower():
-            print(rem.first_name, rem.last_name)
             llcs.append(rem)
             count += 1
     return {"count": count, "llcs": llcs}
