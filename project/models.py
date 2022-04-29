@@ -30,6 +30,7 @@ class Users(BaseMixin, UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String(20), unique=True)
     hashed_password = db.Column(db.String(120), nullable=False)
+    texts_left = db.Column(db.Integer(), default=0)
 
     @classmethod
     def create(cls, **kw):

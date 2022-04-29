@@ -1,5 +1,7 @@
+import json
+
 from flask import Blueprint, request, redirect, url_for, render_template, flash
-from flask_login import login_required
+from flask_login import current_user, login_required
 import os
 import requests
 
@@ -126,6 +128,9 @@ def send(message):
             "replyWebhookUrl": webhook,
         },
     )
+    current_user.texts_left = r.json()["quotaRemaining"]
+    
+    
 
 
 def translate(target, template: str) -> str:
