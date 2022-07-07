@@ -2,8 +2,10 @@ from datetime import datetime
 from enum import unique
 from werkzeug.security import generate_password_hash
 from flask_login import UserMixin
-
+from flask_sqlalchemy import SQLAlchemy, BaseQuery
 from project.__init__ import db
+from sqlalchemy.orm.scoping import scoped_session
+from sqlalchemy import Table
 
 
 class BaseMixin:
@@ -26,6 +28,15 @@ class BaseMixin:
 
         return repr_
 
+
+lead_addresses = db.Table(
+    "lead_addresses",
+    db.Model.metadata,
+    db.Column("lead_id", db.Integer, db.ForeignKey("lead.id")),
+    db.Column("address.id", db.Integer, db.ForeignKey("addresses.id")),
+)
+
+
 class Users(BaseMixin, UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String(20), unique=True)
@@ -42,31 +53,76 @@ class Users(BaseMixin, UserMixin, db.Model):
         user = super().create(**kw)
         return user
 
+
 class Lead(BaseMixin, db.Model):
+    id: int = db.Column(db.Integer, primary_key=True, nullable=False)
+    first_name: str = db.Column(db.String(200))
+    last_name: str = db.Column(db.String(200))
+    age: str = db.Column(db.String(30))  # just added
+    address: str = db.Column(db.String(200))  # moving to address table
+    city: str = db.Column(db.String(200))  # moving to address table
+    state: str = db.Column(db.String(200))  # moving to address table
+    zip: str = db.Column(db.String(200))  # moving to address table
+    owner_occupied: str = db.Column(db.String)  # moving to address table
+    property_type: str = db.Column(db.String)  # moving to address table
+    mls_status: str = db.Column(db.String)
+    phone_number: str = db.Column(
+        db.String(200)
+    )  # can't be removed due to csv template
+    email: str = db.Column(db.String(200))  # can't be removed due to csv template
+    addresses = db.relationship(
+        "Addresses",
+        secondary=lead_addresses,
+        lazy="subquery",
+        backref=db.backref("leads", lazy=True),
+    )
+    mobile_phones = db.relationship("Phone_Number", backref="lead")
+    emails = db.relationship("Email", backref="lead")
+    contacted: int = db.Column(db.Integer, default=0)
+    contact_time = db.Column(db.DateTime)
+    trace_date = db.Column(db.DateTime)
+    template_sent: str = db.Column(db.String(200))
+    # TODO split this off into its own table
+    response: str = db.Column(db.String(2000))
+    motivation_level: str = db.Column(db.String(200))
+    last_trace = db.Column(db.DateTime)
+
+    @classmethod
+    def get_property_types(cls) -> list:
+        L: cls
+        query: BaseQuery = cls.query
+        types = set()
+        all = query.all()
+        for L in all:
+            types.add(L.property_type)
+        return list(types)
+
+    @classmethod
+    def get_llcs(cls):
+        query: BaseQuery = Lead.query
+        all: list[Lead] = query.all()
+        llcs = []
+        for LLC in all:
+            if LLC and LLC.first_name and "llc" in LLC.first_name.lower():
+                llcs.append(LLC)
+        return llcs
+
+    @classmethod
+    def delete_rows(cls, to_delete: list, session: scoped_session, autocommit=True):
+        for rm in to_delete:
+            session.delete(rm)
+        if autocommit:
+            session.commit()
+
+
+class Addresses(BaseMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    first_name = db.Column(db.String(200))
-    last_name = db.Column(db.String(200))
-    age = db.Column(db.String(30))  # just added
     address = db.Column(db.String(200))
     city = db.Column(db.String(200))
     state = db.Column(db.String(200))
     zip = db.Column(db.String(200))
     owner_occupied = db.Column(db.String)
     property_type = db.Column(db.String)
-    mls_status = db.Column(db.String)
-    phone_number = db.Column(db.String(200)) # can't be removed due to csv template
-    email = db.Column(db.String(200)) # can't be removed due to csv template
-    mobile_phones = db.relationship("Phone_Number", backref="lead")
-    emails = db.relationship("Email", backref="lead")
-    contacted = db.Column(db.Integer, default=0)
-    contact_time = db.Column(db.DateTime)
-    trace_date = db.Column(db.DateTime)
-    template_sent = db.Column(db.String(200))
-    response = db.Column(db.String(2000))
-    motivation_level = db.Column(db.String(200))
-    last_trace = db.Column(db.DateTime)
-
-
 
 class Phone_Number(BaseMixin, db.Model):
     __tablename__ = "phone_number"
@@ -93,7 +149,6 @@ class Email(BaseMixin, db.Model):
     contact_time = db.Column(db.DateTime)
     response = db.Column(db.String(200))
     lead_id = db.Column(db.Integer, db.ForeignKey("lead.id"))
-
 
 
 class EmailReply(BaseMixin, db.Model):

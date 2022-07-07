@@ -1,14 +1,16 @@
 from contextlib import contextmanager
+from flask_sqlalchemy import SQLAlchemy, BaseQuery
 from project.__init__ import db
-
+from sqlalchemy.orm.scoping import scoped_session
 @contextmanager
-def db_session(autocommit=True):
+def db_session(autocommit=True) -> scoped_session:
+    session: scoped_session = db.session
     try:
-        yield db.session
+        yield session
         if autocommit:
-            db.session.commit()
+            session.commit()
     except Exception:
-        db.session.rollback()
+        session.rollback()
         raise
     finally:
-        db.session.remove()
+        session.remove()

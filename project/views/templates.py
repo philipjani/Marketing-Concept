@@ -4,7 +4,7 @@ from flask_login import login_required
 from project.forms import TemplateForm
 
 from project.models import db
-from project.models import Lead, Template, TextReply
+from project.models import Template, TextReply
 
 templates = Blueprint("templates", __name__)
 

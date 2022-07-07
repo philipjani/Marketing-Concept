@@ -4,29 +4,30 @@ from flask_login import login_required
 import json
 import os
 import requests
+from flask_sqlalchemy import Pagination
 from project.__init__ import db
-from project.forms import ApplyForm, FilterForm, LeadForm
+from project.forms import SMSCampaignForm, FilterForm, SkiptraceForm
 from project.helpers.db_session import db_session
-from project.models import db
+from project.models import Addresses, db
 from project.models import Lead, Phone_Number, Email
 
 leads = Blueprint("leads", __name__)
-
 
 
 @leads.route("/leads", methods=["POST", "GET"])
 @login_required
 def main():
     filter_form = FilterForm()
-    trace_form = LeadForm()
-    apply_form = ApplyForm()
+    skiptrace_form = SkiptraceForm()
+    sms_campaign_form = SMSCampaignForm()
+    sms_campaign_form.select.choices = []
+    sms_campaign_form.leads = []
     filter_form.comp_select.choices = [
-        "last_name",
+        "address",
         "city",
         "zip",
         "owner_occupied",
         "property_type",
-        "mls_status",
     ]
 
     if request.method == "POST":
@@ -35,17 +36,23 @@ def main():
                 column = filter_form.comp_select.data
                 data = filter_form.info.data
                 rows = filter_form.length.data
-                leads_ = filter(column, data, rows)
+                addresses = filter(column, data, rows)
                 session["filtered"] = {"column": column, "data": data, "rows": rows}
-                return render(trace_form, leads_, filter_form, apply_form)
-            selected = request.form.getlist("select")
-            if trace_form.lead_submit.data:
+                return render(skiptrace_form, addresses, filter_form, sms_campaign_form)
+            req = request.form.get("apply_submit")
+            print(f"req: {req}")
+            print(f"apply_form.data: {sms_campaign_form.select.data}")
+            print(f"apply_form.data: {sms_campaign_form.data}")
+            print(f"apply_form.__dict__: {sms_campaign_form.__dict__}")
+            print(f"apply_form.select.data: {sms_campaign_form.select.data}")
+            if skiptrace_form.address_submit.data:
+                print(f'skiptrace_form.select.data: {skiptrace_form.select.data}')
                 skipped_int = 0
                 success = 0
-                final_msg = ''
-                ids = [int(i) for i in selected]
-                leads_ = db.session.query(Lead).filter(Lead.id.in_(ids)).all()
-                for lead in leads_:
+                final_msg = ""
+                ids = [int(i) for i in skiptrace_form.select.data]
+                leads = Lead.query.filter_by(Lead.id.in_(ids)).all()
+                for lead in leads:
                     #     # API call does not work without first name, OR if already have phone/emails
                     if not lead.first_name:
                         skipped_int += 1
@@ -70,7 +77,11 @@ def main():
                     else:
                         final_msg += f'"{lead.first_name} {lead.last_name}" trace returned "No strong Matches<br>'
                         lead.last_trace = datetime.utcnow()
-                final_msg = final_msg[:-len("<br>")] if final_msg != '' else "all traces successful"
+                final_msg = (
+                    final_msg[: -len("<br>")]
+                    if final_msg != ""
+                    else "all traces successful"
+                )
                 flash(final_msg)
                 try:
                     sess.commit()
@@ -78,33 +89,46 @@ def main():
                         f"traced {success} leads successfully. skipped {skipped_int} traces."
                     )
                 except Exception as e:
-                    flash(
-                        "There was an error inserting API data into database."
-                    )
+                    flash("There was an error inserting API data into database.")
                 page = request.args.get("page", 1, type=int)
-                leads_ = (
+                addresses = (
                     db.session.query(Lead)
                     .order_by(Lead.id)
                     .paginate(page=page, per_page=10)
                 )
-            if apply_form.apply_submit.data:
+            if sms_campaign_form.apply_submit.data:
                 if selected:
                     return redirect(url_for("apply.main", selected=selected))
                 else:
                     return redirect(url_for("leads.main"))
-            return render(trace_form, leads_, filter_form, apply_form)
+            return render(skiptrace_form, addresses, filter_form, sms_campaign_form)
     if request.method == "GET":
         page = request.args.get("page", 1, type=int)
         try:
-            leads_ = filter(
-                session["filtered"]["column"], session["filtered"]["data"], session["filtered"]["rows"]
+            addresses = filter(
+                session["filtered"]["column"],
+                session["filtered"]["data"],
+                session["filtered"]["rows"],
             )
         except KeyError:
-            leads_ = (
-                db.session.query(Lead).order_by(Lead.id).paginate(page=page, per_page=10)
+            addresses = (
+                db.session.query(Addresses)
+                .order_by(Addresses.id)
+                .paginate(page=page, per_page=10)
             )
+        print(f"dir(addresses): {dir(addresses)}")
+        for i, address in enumerate(addresses.items):
+            setattr(address, "forms", [])
+            address: Addresses
+            for lead in address.leads:
+                lead: Lead
+                sms_campaign_form.select.choices.append(lead.id)
+                for choice in sms_campaign_form.select:
+                    pass
+                address.forms.append((choice, lead))
+        skiptrace_form.select.choices = ["" for _ in range(addresses.per_page)]
+        return render(skiptrace_form, addresses, filter_form, sms_campaign_form)
 
-        return render(trace_form, leads_, filter_form, apply_form)
 
 @leads.route("/leads/clear", methods=["GET"])
 def clear():
@@ -112,17 +136,23 @@ def clear():
         session.pop("filtered")
     except KeyError:
         pass
-    return redirect(url_for('leads.main'))
+    return redirect(url_for("leads.main"))
 
 
-def render(lead_form, leads_, filter_form, apply_form):
+def render(
+    skiptrace_form: SkiptraceForm,
+    addresses: Pagination,
+    filter_form: FilterForm,
+    sms_campaign_form: SMSCampaignForm,
+):
     return render_template(
         "leads.html",
-        lead_form=lead_form,
-        leads=leads_,
+        skiptrace_form=skiptrace_form,
+        addresses=addresses,
         filter_form=filter_form,
-        apply_form=apply_form,
+        sms_campaign_form=sms_campaign_form,
     )
+
 
 def extract_info_from_person_data(person_data):
     age = (
@@ -166,7 +196,7 @@ def get_pf_api_data(lead_dict):
 def update_person_db(db, lead, age, mobile_phones, emails, session):
     # Insert all phone numbers of lead into phone numbers table
     for phone in mobile_phones:
-        p_exists = Phone_Number.query.filter_by(mobile_phone = phone).first()
+        p_exists = Phone_Number.query.filter_by(mobile_phone=phone).first()
         if p_exists is None:
             new = Phone_Number(mobile_phone=phone, lead_id=lead.id)
             session.add(new)
@@ -178,7 +208,8 @@ def update_person_db(db, lead, age, mobile_phones, emails, session):
     lead.age = age
     lead.last_trace = datetime.utcnow()
 
-def get_lead_dict(lead):
+
+def get_lead_dict(lead ):
     lead_dict = {
         "FirstName": lead.first_name,
         "LastName": lead.last_name,
@@ -189,11 +220,12 @@ def get_lead_dict(lead):
     }
     return lead_dict
 
-def filter(category:str, query_string:str, rows:int):
+
+def filter(category: str, query_string: str, rows: int) -> Pagination:
     page = request.args.get("page", 1, type=int)
-    leads = (
-        db.session.query(Lead)
-        .filter(getattr(Lead, category).like(f"%{query_string}%"))
+    addresses: Pagination = (
+        db.session.query(Addresses)
+        .filter(getattr(Addresses, category).like(f"%{query_string}%"))
         .paginate(page=page, per_page=rows)
     )
-    return leads
+    return addresses

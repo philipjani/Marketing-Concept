@@ -34,16 +34,18 @@ class RemoveMLSPending(FlaskForm):
 class RemoveLLC(FlaskForm):
     submit = SubmitField("Remove LLC")
 
-class LeadForm(FlaskForm):
-    select = BooleanField()
-    lead_submit = SubmitField("Skiptrace Leads")
+class SkiptraceForm(FlaskForm):
+    select = MultiCheckboxField("Skiptrace Select")
+    address_submit = SubmitField("Skiptrace Addresses")
+
 
 class TemplateForm(FlaskForm):
     name = StringField("Name of Template")
     message = TextAreaField("Template body")
     template_submit = SubmitField("Save")
 
-class ApplyForm(FlaskForm):
+class SMSCampaignForm(FlaskForm):
+    select = MultiCheckboxField("Add to SMS Campaign")
     apply_submit = SubmitField("Apply SMS Template to leads")
 
 class ConfirmForm(FlaskForm):
