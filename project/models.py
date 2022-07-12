@@ -56,17 +56,17 @@ class Lead(BaseMixin, db.Model):
     first_name: str = db.Column(db.String(200))
     last_name: str = db.Column(db.String(200))
     age: str = db.Column(db.String(30))  # just added
-    address: str = db.Column(db.String(200))  # moving to address table
-    city: str = db.Column(db.String(200))  # moving to address table
-    state: str = db.Column(db.String(200))  # moving to address table
-    zip: str = db.Column(db.String(200))  # moving to address table
-    owner_occupied: str = db.Column(db.String)  # moving to address table
-    property_type: str = db.Column(db.String)  # moving to address table
+    # address: str = db.Column(db.String(200))  # moving to address table
+    # city: str = db.Column(db.String(200))  # moving to address table
+    # state: str = db.Column(db.String(200))  # moving to address table
+    # zip: str = db.Column(db.String(200))  # moving to address table
+    # owner_occupied: str = db.Column(db.String)  # moving to address table
+    # property_type: str = db.Column(db.String)  # moving to address table
     mls_status: str = db.Column(db.String)
-    phone_number: str = db.Column(
-        db.String(200)
-    )  # can't be removed due to csv template
-    email: str = db.Column(db.String(200))  # can't be removed due to csv template
+    # phone_number: str = db.Column(
+    #     db.String(200)
+    # )  # can't be removed due to csv template
+    # email: str = db.Column(db.String(200))  # can't be removed due to csv template
     addresses = db.relationship(
         "Addresses",
         secondary=lead_addresses,

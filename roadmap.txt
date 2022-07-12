@@ -69,6 +69,7 @@ Notes:
 Zack TODO:
     change to .env variables:
         "SQLALCHEMY_DATABASE_URI"
+    split text responses off into their own table. this will allow saving a history of responses instead of just the most recent one
     compartmentalize actions into classes/functions throughout
     change flashed messages in file uploads/skiptraces into logs
     create better exceptions to isolate known errors and expose others

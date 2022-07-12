@@ -18,7 +18,9 @@ class AdminIndex(AdminIndexView):
                 return redirect(url_for("index.page"))
 
             # forms
-            form_rm_by_property_type = RemoveProperyType(prefix="removepropertytype")
+            # !bug this broke with the address split.
+            # !bug to fix change the wtforms choices in the form
+            # ! form_rm_by_property_type = RemoveProperyType(prefix="removepropertytype")
             form_rm_mls_pendings = RemoveMLSPending(prefix="removemlspending")
             form_rm_llcs = RemoveLLC(prefix="removellc")
 
@@ -27,16 +29,17 @@ class AdminIndex(AdminIndexView):
 
             
             if request.method == "POST":
-                if form_rm_by_property_type.submit.data:
-                    property_types = Lead.get_property_types()
-                    count = 0
-                    for property_type in property_types:
-                        rows_with_type = Lead.query.filter_by(
-                            property_type=property_type
-                        ).all()
-                        count += len(rows_with_type)
-                        Lead.delete_rows(rows_with_type, sess)
-                elif form_rm_mls_pendings.submit.data:
+                # ! attached to broken form
+                # if form_rm_by_property_type.submit.data:
+                #     property_types = Lead.get_property_types()
+                #     count = 0
+                #     for property_type in property_types:
+                #         rows_with_type = Lead.query.filter_by(
+                #             property_type=property_type
+                #         ).all()
+                #         count += len(rows_with_type)
+                #         Lead.delete_rows(rows_with_type, sess)
+                if form_rm_mls_pendings.submit.data:
                     count = len(mls_pendings)
                     Lead.delete_rows(mls_pendings, sess)
                 elif form_rm_llcs.submit.data:
@@ -46,11 +49,13 @@ class AdminIndex(AdminIndexView):
                 flash(f"deleted {count} rows") if count > 0 else flash(
                     "nothing to delete"
                 )
-            form_rm_by_property_type.types.choices = Lead.get_property_types()
+            # ! attached to form
+            # form_rm_by_property_type.types.choices = Lead.get_property_types()
 
             return self.render(
                 "admin/index.html",
-                property_type=form_rm_by_property_type,
+                # ! attached to form. I removed the jinja in "admin/index.html"
+                # property_type=form_rm_by_property_type,
                 mls=form_rm_mls_pendings,
                 llc=form_rm_llcs,
                 mls_amount=len(mls_pendings),
