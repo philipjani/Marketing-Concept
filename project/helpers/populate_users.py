@@ -1,6 +1,7 @@
 import os
 
 def check_and_populate(app):
+    "this is in leu of a login view"
 
     with app.app_context():
         from project.models import Users, Phone_Number

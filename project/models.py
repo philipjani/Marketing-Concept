@@ -1,11 +1,8 @@
-from datetime import datetime
-from enum import unique
 from werkzeug.security import generate_password_hash
 from flask_login import UserMixin
-from flask_sqlalchemy import SQLAlchemy, BaseQuery
+from flask_sqlalchemy import BaseQuery
 from project.__init__ import db
 from sqlalchemy.orm.scoping import scoped_session
-from sqlalchemy import Table
 
 
 class BaseMixin:
@@ -114,6 +111,68 @@ class Lead(BaseMixin, db.Model):
         if autocommit:
             session.commit()
 
+    def add_emails(self, emails: list, check: bool = True):
+        """add emails to lead. set check to `False` to skip database check"""
+        if not emails:
+            return
+        for email in emails:
+            if check:
+                self.add_email(email)
+            else:
+                self.add_email_nocheck(email)
+
+    def add_email_nocheck(self, email: str):
+        """add email to lead skipping the database check"""
+        print(f'email: {email}')
+        if not email:
+            return
+        new_email = Email(email_address=email)
+        self.emails.append(new_email)
+
+    def add_email(self, email: str):
+        """add email to lead"""
+        print(f'email: {email}')
+        print(f'self.emails: {self.emails}')
+        existing_email = Email.query.filter_by(email_address=email).first()
+        if existing_email:
+            self.emails.append(existing_email)
+            return
+        self.add_email_nocheck(email)
+
+    def add_phones(self, phone_numbers: list, check: bool = True):
+        """add phone numbers to lead. set check to `False` to skip database check"""
+        if not phone_numbers:
+            return
+        for phone in phone_numbers:
+            if check:
+                self.add_phone(phone)
+            else:
+                self.add_phone_nocheck(phone)
+
+    def add_phone_nocheck(self, phone: str):
+        """add phone number to lead skipping the database check"""
+        if not phone:
+            return
+        standardized_number = convert_phone(phone)
+        new_phone = Phone_Number(mobile_phone=standardized_number)
+        self.mobile_phones.append(new_phone)
+
+
+    def add_phone(self, phone: str):
+        """add phone number to lead"""
+        new_phone = Phone_Number.query.filter_by(mobile_phone=phone).first()
+        if new_phone:
+            return self.mobile_phones.append(new_phone)
+        self.add_phone_nocheck(phone)
+
+def convert_phone(phone: str):
+    """used to make sure all numbers follow the same format"""
+    # TODO use a library to make sure that this is bug free
+    converted = ""
+    for symbol in phone:
+        if symbol.isnumeric():
+            converted += symbol
+    return converted
 
 class Addresses(BaseMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -123,6 +182,7 @@ class Addresses(BaseMixin, db.Model):
     zip = db.Column(db.String(200))
     owner_occupied = db.Column(db.String)
     property_type = db.Column(db.String)
+
 
 class Phone_Number(BaseMixin, db.Model):
     __tablename__ = "phone_number"

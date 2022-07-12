@@ -21,5 +21,6 @@ def init_blueprints(app):
 
     from project.views.replies import replies as replies_blueprint
     app.register_blueprint(replies_blueprint)
+
     return
     

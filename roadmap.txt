@@ -64,10 +64,153 @@ front end stuff
 
 468, 472, 475, 479, 481, 484, 492, 498, 505, 508
 
-
+Notes:
+    since as of now, the users are static the current users are created in project.helpers.populate_users 
 Zack TODO:
+    change to .env variables:
+        "SQLALCHEMY_DATABASE_URI"
+    compartmentalize actions into classes/functions throughout
+    change flashed messages in file uploads/skiptraces into logs
+    create better exceptions to isolate known errors and expose others
+    clean up apply_templates to work with MultiCheckboxField
+    make sure incoming phone numbers are unique
+    filter form needed to be fixed to work with current database
+    automatically delele the all but the most recent number for a lead
+        add "primary_number" to table and have that be the most recent number reported
+        currently the texts are only being sent to the first number in the Lead's mobile_phones list which isn't ideal
     redo select buttons:
-        address select selects all leads belonging to it
+        address select auto-selects all leads belonging to it
         select all just selects all
         select headers
-    add js to hide/reveal the lead subtable
+    add js to hide/reveal the lead sub-table
+    add option to bypass last trace
+    add optional automatic deletion of contacts that can't be traced
+    better format the leads table to fit screen display data more intuitively
+
+Skiptrace example:
+json.dumps(person_data): 
+{
+    "person": 
+    {
+        "name": 
+        {
+            "firstName": "Ralph", 
+            "middleName": "S", 
+            "lastName": "Michelot",
+        }, 
+        "age": "46", 
+        "addresses": 
+        [
+            {
+                "street": "35 Brooklyn Ave", 
+                "unit": "3B", 
+                "city": "Valley Stream", 
+                "state": "NY", 
+                "zip": "11581", 
+                "firstReportedDate": "4/30/2006", 
+                "lastReportedDate": "6/1/2022"
+            }, 
+            {
+                "street": "60 Plainfield Ave", 
+                "unit": "5", 
+                "city": "Floral Park", 
+                "state": "NY", 
+                "zip": "11001", 
+                "firstReportedDate": "9/1/2012",
+                "lastReportedDate": "6/29/2013"
+            }, 
+            {
+                "street": "959 Church St", 
+                "unit": "", 
+                "city": "Reading", 
+                "state": "PA", 
+                "zip": "19601", 
+                "firstReportedDate": "5/2/2005", 
+                "lastReportedDate": "1/1/2022"
+            }, 
+            {
+                "street": "10901 Monterey St", 
+                "unit": "", 
+                "city": "Jamaica", 
+                "state": "NY", 
+                "zip": "11429", 
+                "firstReportedDate": "3/31/1994", 
+                "lastReportedDate": "5/3/2007"
+            }, 
+            {
+                "street": "170 Locustwood Blvd", 
+                "unit": "", 
+                "city": "Elmont", 
+                "state": "NY", 
+                "zip": "11003", 
+                "firstReportedDate": "4/1/1994", 
+                "lastReportedDate": "1/1/2022"
+            }
+        ], 
+        "phones": 
+        [
+            {
+                "number": "(718) 300-3538", 
+                "type": "mobile", 
+                "isConnected": true, 
+                "firstReportedDate": "10/31/2007", 
+                "lastReportedDate": "6/1/2022"
+            }, 
+            {
+                "number": "(516) 502-6206", 
+                "type": "mobile", 
+                "isConnected": true, 
+                "firstReportedDate": "5/1/2006", 
+                "lastReportedDate": "2/3/2014"
+            }, 
+            {
+                "number": "(516) 326-7739", 
+                "type": "landline", 
+                "isConnected": true, 
+                "firstReportedDate": "4/1/1994", 
+                "lastReportedDate": "7/15/2019"
+            }, 
+            {
+                "number": "(516) 987-1219", 
+                "type": "mobile", 
+                "isConnected": true, 
+                "firstReportedDate": "10/29/2019", 
+                "lastReportedDate": "5/23/2022"
+            }, 
+            {
+                "number": "(516) 326-2219", 
+                "type": "landline", 
+                "isConnected": true, 
+                "firstReportedDate": "3/16/2016", 
+                "lastReportedDate": "3/16/2016"
+            }
+        ], 
+    "emails": 
+        [
+            {
+                "email": "jmichelot@gmail.com"
+            }, 
+            {
+                "email": "rmichelot@gmail.com"
+            }
+        ]
+    }, 
+"message": "", 
+"pagination": 
+    {
+        "currentPageNumber": 1, 
+        "resultsPerPage": 1, 
+        "totalPages": 1
+    }, 
+        "databaseQueryInfo": [], 
+        "searchCriteria": [], 
+        "totalRequestExecutionTimeMs": 130, 
+        "requestId": "d24744d5-7a2c-430f-9a66-6f8f7c33c5d3", 
+        "requestType": "DevAPIContactEnrich", 
+        "requestTime": "2022-07-08T07:41:44.0424012-07:00", 
+        "isError": false, 
+        "error": 
+            {"inputErrors": [], 
+            "warnings": []
+        }
+    }

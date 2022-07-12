@@ -14,7 +14,6 @@ from flask import (
     url_for,
 )
 from flask_login import login_required
-from project.__init__ import db
 from project.helpers.db_session import db_session
 from project.models import (
     Users,
@@ -78,10 +77,7 @@ def upload(df: pd.DataFrame, session: scoped_session):
                     last_name=d["last_name"],
                 )
                 if d["phone_number"]:
-                    phone = Phone_Number.query.filter_by(mobile_phone=d["phone_number"]).first()
-                    if phone is None:
-                        phone = Phone_Number(mobile_phone=d["phone_number"])
-                    lead.mobile_phones.append(phone)
+                    lead.add_phone(d["phone_number"])
             lead.addresses.append(address)
             session.add(lead)
             successes += 1

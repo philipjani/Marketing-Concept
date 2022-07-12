@@ -46,11 +46,11 @@
 
 <div class="table-responsive" style="max-width: 95%;">
     <form action="" method='POST'>
-        {% for option in skiptrace_form.select %}
+        {% for option in leads_form.select_address %}
         {% set i = loop.index - 1 %}
         <table class="table table-striped" style="border-radius: 4px;">
             <tr style="overflow: scroll;">
-                <th>{{skiptrace_form.select.label}}</th>
+                <th>{{leads_form.select_address.label}}</th>
                 <th>Number</th>
                 <th>id</th>
                 <th>address</th>
@@ -76,7 +76,7 @@
 
         <table class="table table-striped" style="margin-left: 30px;">
             <tr style="overflow: scroll; height: 10px;">
-                <th>{{sms_campaign_form.select.label}}</th>
+                <th>{{leads_form.select_lead.label}}</th>
                 <th>id</th>
                 <th>contacted</th>
                 <th>contact time</th>
@@ -113,8 +113,8 @@
         {% endif %}
         {% endfor %}
         </table>
-        {{ sms_campaign_form.apply_submit (class="btn btn-secondary", style="margin-bottom: 10px;", data_flag="template_button")}}
-        {{ skiptrace_form.address_submit (class="btn btn-secondary", style="margin-bottom: 10px;") }}
+        {{ leads_form.sms_submit (class="btn btn-secondary", style="margin-bottom: 10px;", data_flag="template_button")}}
+        {{ leads_form.skip_submit (class="btn btn-secondary", style="margin-bottom: 10px;") }}
         <p>Texts Remaining: {{current_user.texts_left}}</p>
     </form>
 </div>

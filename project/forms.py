@@ -1,12 +1,10 @@
 
-from flask import Flask
 from flask_wtf import FlaskForm
 
 from wtforms import widgets
-from wtforms.fields.choices import SelectField, SelectMultipleField, RadioField
+from wtforms.fields.choices import SelectField, SelectMultipleField
 from wtforms.fields.numeric import IntegerField
 from wtforms.fields.simple import BooleanField, StringField, SubmitField, TextAreaField, PasswordField
-from wtforms.widgets.core import TextArea
 from wtforms.validators import DataRequired
 from wtforms.validators import ValidationError
 from werkzeug.security import check_password_hash
@@ -34,6 +32,12 @@ class RemoveMLSPending(FlaskForm):
 class RemoveLLC(FlaskForm):
     submit = SubmitField("Remove LLC")
 
+class LeadsForm(FlaskForm):
+    select_address = MultiCheckboxField("Select")
+    select_lead = MultiCheckboxField("Select")
+    sms_submit = SubmitField("Apply SMS Campaign to Leads")
+    skip_submit = SubmitField("Skiptrace Leads")
+
 class SkiptraceForm(FlaskForm):
     select = MultiCheckboxField("Skiptrace Select")
     address_submit = SubmitField("Skiptrace Addresses")
@@ -43,10 +47,6 @@ class TemplateForm(FlaskForm):
     name = StringField("Name of Template")
     message = TextAreaField("Template body")
     template_submit = SubmitField("Save")
-
-class SMSCampaignForm(FlaskForm):
-    select = MultiCheckboxField("Add to SMS Campaign")
-    apply_submit = SubmitField("Apply SMS Template to leads")
 
 class ConfirmForm(FlaskForm):
     confirm_submit = SubmitField("Confirm")

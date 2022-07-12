@@ -25,7 +25,7 @@ class AdminIndex(AdminIndexView):
             llcs = Lead.get_llcs()
             mls_pendings = Lead.query.filter_by(mls_status="PENDING").all()
 
-            # convert(sess)
+            convert(sess)
             if request.method == "POST":
                 if form_rm_by_property_type.submit.data:
                     property_types = Lead.get_property_types()

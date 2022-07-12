@@ -1,14 +1,18 @@
 from datetime import datetime
 from flask import Blueprint, request
 import json
-from project.models import TextReply, Phone_Number
+from project.helpers.db_session import db_session
+from project.models import TextReply, Phone_Number, convert_phone
+from sqlalchemy.orm.scoping import scoped_session
 
 textreply = Blueprint("textreply", __name__)
 
 
 @textreply.route("/textreply", methods=["POST"])
 def webhook():
-    if request.method == "POST":
+    # TODO clean this up
+    sess: scoped_session
+    with db_session() as sess:
         if type(request.json) is str:
             reply = json.loads(request.json)
         elif type(request.json) is dict:
@@ -16,21 +20,14 @@ def webhook():
         else:
             return
         message = reply["text"]
-        number = clean_number(reply["fromNumber"])
+        number = convert_phone(reply["fromNumber"])
         phone = Phone_Number.query.filter_by(mobile_phone=number).first()
         if not phone:
             return f"{request.json}", 200
         else:
-            TextReply.create(
+            new_text = TextReply(
                 message=message, phone_id=phone.id, contact_time=datetime.utcnow()
             )
+            sess.add(new_text)
             return f"{request.json}", 200
 
-def clean_number(num: str) -> str:
-    if not num:
-        return
-    if num[0] == "+" and len(num) > 1:
-        num = num[1:]
-    if num[0] == "1" and len(num) > 1:
-        num = num[1:]
-    return num
