@@ -1,5 +1,5 @@
+"""Flask-login set up"""
 from flask_login import LoginManager
-from flask import url_for
 
 login_manager = LoginManager()
 

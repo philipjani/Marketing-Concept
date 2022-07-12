@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+"""database models used by SQLAlchemy"""
+
 from werkzeug.security import generate_password_hash
 from flask_login import UserMixin
 from flask_sqlalchemy import BaseQuery
@@ -55,18 +59,8 @@ class Lead(BaseMixin, db.Model):
     id: int = db.Column(db.Integer, primary_key=True, nullable=False)
     first_name: str = db.Column(db.String(200))
     last_name: str = db.Column(db.String(200))
-    age: str = db.Column(db.String(30))  # just added
-    # address: str = db.Column(db.String(200))  # moving to address table
-    # city: str = db.Column(db.String(200))  # moving to address table
-    # state: str = db.Column(db.String(200))  # moving to address table
-    # zip: str = db.Column(db.String(200))  # moving to address table
-    # owner_occupied: str = db.Column(db.String)  # moving to address table
-    # property_type: str = db.Column(db.String)  # moving to address table
+    age: str = db.Column(db.String(30))
     mls_status: str = db.Column(db.String)
-    # phone_number: str = db.Column(
-    #     db.String(200)
-    # )  # can't be removed due to csv template
-    # email: str = db.Column(db.String(200))  # can't be removed due to csv template
     addresses = db.relationship(
         "Addresses",
         secondary=lead_addresses,
@@ -139,31 +133,37 @@ class Lead(BaseMixin, db.Model):
             return
         self.add_email_nocheck(email)
 
-    def add_phones(self, phone_numbers: list, check: bool = True):
+    def add_phones(self, phone_numbers: list, check: bool = True) -> list:
         """add phone numbers to lead. set check to `False` to skip database check"""
         if not phone_numbers:
             return
+        phones = []
         for phone in phone_numbers:
             if check:
-                self.add_phone(phone)
+                new = self.add_phone(phone)
             else:
-                self.add_phone_nocheck(phone)
+                new = self.add_phone_nocheck(phone)
+            phones.append(new)
+        return phones
 
-    def add_phone_nocheck(self, phone: str):
+
+    def add_phone_nocheck(self, phone: str) -> Phone_Number:
         """add phone number to lead skipping the database check"""
         if not phone:
             return
         standardized_number = convert_phone(phone)
         new_phone = Phone_Number(mobile_phone=standardized_number)
         self.mobile_phones.append(new_phone)
+        return new_phone
 
 
-    def add_phone(self, phone: str):
+    def add_phone(self, phone: str) -> Phone_Number:
         """add phone number to lead"""
         new_phone = Phone_Number.query.filter_by(mobile_phone=phone).first()
         if new_phone:
-            return self.mobile_phones.append(new_phone)
-        self.add_phone_nocheck(phone)
+            self.mobile_phones.append(new_phone)
+            return new_phone
+        return self.add_phone_nocheck(phone)
 
 def convert_phone(phone: str) -> str:
     """used to make sure all numbers follow the same format"""

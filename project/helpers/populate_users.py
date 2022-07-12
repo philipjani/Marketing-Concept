@@ -1,3 +1,5 @@
+"""used to create the base users (Philip and Zack)"""
+
 import os
 
 def check_and_populate(app):

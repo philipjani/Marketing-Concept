@@ -1,3 +1,4 @@
+"""This was used by me to separate the addresses out of the leads"""
 from flask_sqlalchemy import BaseQuery
 from sqlalchemy.orm.scoping import scoped_session
 
@@ -48,31 +49,6 @@ def delete_dups(session: scoped_session) -> int:
     return count
 
 
-
-
-        
-
-    # address = address_query.filter_by(address=leads[0].address).first()
-    # if not address:
-    #     address = Addresses(
-    #         address=leads[0].address,
-    #         city=leads[0].city,
-    #         state=leads[0].state,
-    #         zip=leads[0].zip,
-    #         owner_occupied=leads[0].owner_occupied,
-    #         property_type=leads[0].property_type,
-    #     )
-    # print("addresses" in inspect(leads[0]).mapper.relationships)
-    # print(leads[0].addresses)
-    # for k, v in leads[0].__dict__.items():
-    #     print(f'k: {k} || v: {v}')
-    # print(leads[0].__mapper__.relationships)
-    # if leads[0].addresses == []:
-    #     leads[0].addresses.append(address)
-    #     print("appended")
-    # else:
-    #     print("not")
-    #     print(address in leads[0].addresses)
 
 
 

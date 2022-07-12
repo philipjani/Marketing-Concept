@@ -1,5 +1,95 @@
 # Marketing-Concept
 
+**Marketing concept web-app**
+to launch locally make sure you have docker installed.
+then all you should have to do is type "docker-compose up" from your commandline to bring it up.
+type "docker-compose down" in a different terminal to stop the server. ( or you can just enter CTRL+C in the same terminal
+
+**Files:**
+- migrations
+    - used by Flask Migrate to setup database
+    - Flask Migrate checks migrations/versions for the python alembic files to upgrade the server at every start up
+    - this is done by the "ready_db()" function in \__init__.py
+    - see Flask Migrate documentation for more
+- project
+    - where all internal application lives
+    - helpers: Helper functions
+    - static: static assets (CSS, JS, and other static files)
+    - templates: HTML templates
+    - views: internal routes of the application
+    - \__init__.py: application initializer
+- .flaskenv
+    - only used when running application through "Flask run"
+- .gitignore
+    - used to list files/folders to not upload to git
+- app.py
+    - entry point for docker to load application
+- blob.json
+    - ??? from before me
+- docker-compose.yml
+    - used to run docker locally
+- Dockerfile
+    - used by all instances of Docker
+- heroku.yml
+    -used to deploy to heroku
+- requirements.txt
+    - used to list and download dependencies
+- ngrok.exe
+    - used by ngrok which is used when running locally
+- roadmap.txt
+    - old notes
+- test.db
+    - ??? from before me
+
+
+**TODO: Running list of things I had planned to do.**
+- change to .env variables:
+    - "SQLALCHEMY_DATABASE_URI"
+- split text responses (Lead.response) into their own table. 
+    - this will allow saving a history of responses instead of just the most recent one
+- compartmentalize actions into classes/functions throughout
+    - for example, make a Filter class that filters the selections from leads
+- change flashed messages in file uploads/skiptraces into logs
+    - detailed reports could then be emailed to you or sent to a google drive etc
+- create better exceptions to isolate known errors and expose others
+    - More site reliablity. Needed for robust testing
+- clean up apply_templates to work with MultiCheckboxField
+    currently the apply_templates route and view doeesn't best use wtforms. This would hinder testing and UX
+- filter form needed to be fixed to work with current database
+    the current filter form is broken since addresses was split off Lead
+- manage most recent number for a lead
+    - add "primary_number" to table and have that be the most recent number reported
+    - currently the texts are only being sent to the first number in the Lead's mobile_phones list which isn't ideal
+- redo select buttons:
+    - in leads the leads in the sub tables need to be selected alongside the address they are attached to.
+    - impliment js that will automatically select all leads belonging to the address when the address' checkbox is selected
+    - impliment js that will automatically select address attached to lead when lead's checkbox is selected
+- select headers
+    -clean up UI by hiding lead sub-tables. expand them when address is clicked on
+- add option to bypass last trace
+    currently the user cannot skiptrace a lead twice. Add a way for the user to bypass that
+- add optional automatic deletion of contacts that can't be traced
+
+- better format the leads table to fit screen display data more intuitively
+- impliment unit testing for site reliability
+- rename database classes to follow best practices (CamelCase)
+
+
+
+**Heroku:**
+Heroku currently hosts the application and is configured through the Dockerfile and heroku.yml
+docker-compose.yml is just for local deployment
+
+to upload a new release to heroku you need to log into heroku through your cli. (you first need to install the heroku cli) 
+then from your cli add and commit the new release and push it up to heroku
+git add .
+git commit -am "message"
+git push heroku main
+you can download a back up of the database from the heroku app in the Postgres addon
+see heroku docs for more.
+
+**Old README:**
+
 Real Estate Lead Generation Software
 
 Problem: Can't find enough off-market real estate leads to generate consistent business.

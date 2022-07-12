@@ -15,7 +15,7 @@ def main():
         num = Phone_Number.query.get(r.phone_id)
         lead = Lead.query.get(num.lead_id)
         replies.append(
-            {"address": lead.address,
+            {
                 "id": r.id,
                 "message": r.message,
                 "city": lead.city,
@@ -23,7 +23,6 @@ def main():
                 "zip": lead.zip,
                 "first_name": lead.first_name,
                 "last_name": lead.last_name,
-                "property_type": lead.property_type,
                 "mls_status": lead.mls_status,
                 "template_sent": lead.template_sent,
                 "number": num.mobile_phone,

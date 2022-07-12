@@ -1,7 +1,7 @@
+"""application initializer"""
 import os
 
 import flask_migrate
-
 from sqlalchemy_utils.functions import database_exists
 from flask import Flask
 from flask_migrate import Migrate
@@ -10,7 +10,6 @@ from flask_socketio import SocketIO
 from flask_admin import Admin
 
 from project.views.admin import AdminIndex
-
 from project.helpers.flask_login import config as config_fl
 from project.blueprints import init_blueprints
 from project.helpers.populate_users import check_and_populate

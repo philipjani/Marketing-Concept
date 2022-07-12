@@ -1,3 +1,5 @@
+"""function used to convert db to csv"""
+
 import csv
 
 

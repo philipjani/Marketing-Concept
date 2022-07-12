@@ -1,5 +1,6 @@
+"""context manager used to efficiently and cleanly add items to the database"""
+
 from contextlib import contextmanager
-from flask_sqlalchemy import SQLAlchemy, BaseQuery
 from project.__init__ import db
 from sqlalchemy.orm.scoping import scoped_session
 @contextmanager
