@@ -39,7 +39,11 @@ def create_app(test_config=None):
         socketio.init_app(app)
         init_admin(admin, db)
         admin.init_app(app, AdminIndex())
-        # separate_addresses(app)
+        with app.app_context():
+            from project.helpers.db_session import db_session
+            from project.helpers.address_convert import convert
+            with db_session() as sess:
+                convert(sess)
         return app
     except Exception as e:
         print(f"e: {e}")

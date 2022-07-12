@@ -1,15 +1,12 @@
 from flask_sqlalchemy import BaseQuery
 from sqlalchemy.orm.scoping import scoped_session
-from flask import flash
 
 def convert(session: scoped_session):
     from project.models import Addresses
     if Addresses.query.filter_by(address="STOP_FLAG").first():
-        flash("skipping update")
         return
-    addys = separate_addresses(session)
-    dups = delete_dups(session)
-    flash(f"{addys} addresses separated.\n{dups} duplicate addresses deleted.")
+    separate_addresses(session)
+    delete_dups(session)
 
 def separate_addresses(session: scoped_session) -> int:
     from project.models import Lead, Addresses
