@@ -165,7 +165,7 @@ class Lead(BaseMixin, db.Model):
             return self.mobile_phones.append(new_phone)
         self.add_phone_nocheck(phone)
 
-def convert_phone(phone: str):
+def convert_phone(phone: str) -> str:
     """used to make sure all numbers follow the same format"""
     # TODO use a library to make sure that this is bug free
     converted = ""

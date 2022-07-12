@@ -44,6 +44,18 @@ def create_app(test_config=None):
             from project.helpers.address_convert import convert
             with db_session() as sess:
                 convert(sess)
+                from project.models import Phone_Number
+                if not Phone_Number.query.filter_by(mobile_phone="STOP_FLAG").first():
+                    flag = Phone_Number(mobile_phone="STOP_FLAG")
+                    sess.add(flag)
+                    sess.commit()
+                    from project.models import convert_phone
+                    for number in Phone_Number.query.all():
+                        if number.mobile_phone == "STOP_FLAG":
+                            continue
+                        num = convert_phone(number.mobile_phone)
+                        number.mobile_phone = num
+
         return app
     except Exception as e:
         print(f"e: {e}")
