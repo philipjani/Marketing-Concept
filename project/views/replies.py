@@ -18,9 +18,6 @@ def main():
             {
                 "id": r.id,
                 "message": r.message,
-                "city": lead.city,
-                "state": lead.state,
-                "zip": lead.zip,
                 "first_name": lead.first_name,
                 "last_name": lead.last_name,
                 "mls_status": lead.mls_status,
