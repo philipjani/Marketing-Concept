@@ -6,6 +6,7 @@ from project.models import Phone_Number, TextReply, Lead
 replies = Blueprint("replies", __name__)
 
 # TODO switch to addresses
+# TODO add pagination. this will eventually crash if it gets too large
 @replies.route("/replies", methods=["GET", "POST"])
 @login_required
 def main():

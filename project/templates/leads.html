@@ -51,25 +51,23 @@
         <table class="table table-striped" style="border-radius: 4px;">
             <tr style="overflow: scroll;">
                 <th>{{leads_form.select_address.label}}</th>
-                <th>Number</th>
-                <th>id</th>
                 <th>address</th>
                 <th>city</th>
                 <th>state</th>
                 <th>zip</th>
                 <th>owner occupied</th>
                 <th>property type</th>
+                <th>id</th>
             </tr>
             <tr style="overflow: scroll;">
                 <td>{{option (class="form-check-input", data_click="select-skip", value=addresses.items[i].id)}}</td>
-                <td>{{i}}</td>
-                <td>{{addresses.items[i].id}}</td>
                 <td>{{addresses.items[i].address}}</td>
                 <td>{{addresses.items[i].city}}</td>
                 <td>{{addresses.items[i].state}}</td>
                 <td>{{addresses.items[i].zip}}</td>
                 <td>{{addresses.items[i].owner_occupied}}</td>
                 <td>{{addresses.items[i].property_type}}</td>
+                <td>{{addresses.items[i].id}}</td>
             </tr>
         </table>
         {% if addresses.items[i].leads %}
@@ -77,7 +75,9 @@
         <table class="table table-striped" style="margin-left: 30px;">
             <tr style="overflow: scroll; height: 10px;">
                 <th>{{leads_form.select_lead.label}}</th>
-                <th>id</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Phone numbers</th>
                 <th>contacted</th>
                 <th>contact time</th>
                 <th>Trace Date</th>
@@ -85,9 +85,8 @@
                 <th>Template Sent</th>
                 <th>Response</th>
                 <th>Motivation Level</th>
-                <th>First Name</th>
-                <th>Last Name</th>
                 <th>Age</th>
+                <th>id</th>
             </tr>
         {% for tuple in addresses.items[i].forms %}
         {% set option = tuple[0] %}
@@ -95,7 +94,9 @@
             <tr style="overflow: scroll; height: 10px;">
                 
                 <td>{{option (class="form-check-input", data_click="select-sms") }}</td>
-                <td>{{lead.id}}</td>
+                <td>{{lead.first_name}}</td>
+                <td>{{lead.last_name}}</td>
+                <td>{{lead.mobile_phones}}</td>
                 <td>{{lead.contacted}}</td>
                 <td>{{lead.contact_time}}</td>
                 <td>{{lead.trace_date}}</td>
@@ -103,9 +104,8 @@
                 <td>{{lead.template_sent}}</td>
                 <td>{{lead.response}}</td>
                 <td>{{lead.motivation_level}}</td>
-                <td>{{lead.first_name}}</td>
-                <td>{{lead.last_name}}</td>
                 <td>{{lead.age}}</td>
+                <td>{{lead.id}}</td>
                 </tr>
         {% endfor %}
             
