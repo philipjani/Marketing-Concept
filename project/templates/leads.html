@@ -103,7 +103,7 @@
                     <td>{{lead.first_name}}</td>
                     <td>{{lead.last_name}}</td>
                     <td>
-                        {% if number.mobile_phone %}
+                        {% if lead.mobile_phones %}
                         {% for number in lead.mobile_phones %}
                         {{number.mobile_phone}},
                         {% endfor %}
