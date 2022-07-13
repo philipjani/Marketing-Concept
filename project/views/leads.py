@@ -34,6 +34,7 @@ def main():
             "property_type",
         ]
 
+
         if request.method == "POST":
             if filter_form.filter_submit.data:
                 column = filter_form.comp_select.data

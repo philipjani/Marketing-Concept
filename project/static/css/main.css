@@ -7,6 +7,26 @@ table, th, td {
     /* font-size: small; */
 }
 
+div.address-container{
+    display: block;
+    background-color: lightgray;
+    padding: 5px;
+    margin-bottom: 8px;
+    overflow-x: scroll;
+}
+table.lead_table {
+    margin-left: 10px;
+}
+.lead_header {
+    background-color: bisque;
+}
+.address_header {
+    background-color:cornflowerblue;
+}
+
+td {
+    background-color: white!important;
+}
 /* .my-custom-scrollbar {
     position: relative;
     height: 600px;

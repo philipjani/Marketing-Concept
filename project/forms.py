@@ -33,8 +33,8 @@ class RemoveLLC(FlaskForm):
     submit = SubmitField("Remove LLC")
 
 class LeadsForm(FlaskForm):
-    select_address = MultiCheckboxField("Select")
-    select_lead = MultiCheckboxField("Select")
+    select_address = MultiCheckboxField("Select Address")
+    select_lead = MultiCheckboxField("Select Lead")
     sms_submit = SubmitField("Apply SMS Campaign to Leads")
     skip_submit = SubmitField("Skiptrace Leads")
 

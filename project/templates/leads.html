@@ -5,22 +5,26 @@
 {% endblock %}
 
 {% block body %}
+
+
+
 <script src="{{ url_for('static', filename='js/leads.js') }}"></script>
 {% with messages = get_flashed_messages() %}
 {% if messages %}
 {% for message in messages %}
 <div class="alert alert-primary alert-dismissible fade show" role="alert">
-  {{ message|safe }}
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
+    {{ message|safe }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 {% endfor %}
 {% endif %}
 {% endwith %}
-<br><h1 style="text-align:center">Lead Store</h1><br>
+<br>
+<h1 style="text-align:center">Lead Store</h1><br>
 {% if addresses %}
-    
+
 <!-- filter table dropdown  DYLAN ADDED-->
 <form class="form-inline" method="POST">
 
@@ -38,82 +42,88 @@
             {{ filter_form.length (class="form-control", value="20") }}
         </div>
         {{ filter_form.filter_submit (class="btn btn-secondary", style="margin-top: 10px;") }}
-        <a class="btn btn-secondary", style="margin-top: 10px;", href="{{url_for('leads.clear')}}">Clear Filter</a>
+        <a class="btn btn-secondary" , style="margin-top: 10px;" , href="{{url_for('leads.clear')}}">Clear Filter</a>
     </div>
 </form>
-<span style="float: right;">Select Addresses for SkipTrace <input class="form-check-input" type="checkbox" data-flag="select-addresses"/></span><br/>
-<span style="float: right;">Add all to Campaign <input class="form-check-input" type="checkbox" data-flag="select-leads"/></span><br/>
+<span style="float: right;">Select All <input class="form-check-input" type="checkbox"
+        data-flag="select-all" /></span><br />
 
-<div class="table-responsive" style="max-width: 95%;">
+
+<div class="table-responsive">
     <form action="" method='POST'>
         {% for option in leads_form.select_address %}
         {% set i = loop.index - 1 %}
-        <table class="table table-striped" style="border-radius: 4px;">
-            <tr style="overflow: scroll;">
-                <th>{{leads_form.select_address.label}}</th>
-                <th>address</th>
-                <th>city</th>
-                <th>state</th>
-                <th>zip</th>
-                <th>owner occupied</th>
-                <th>property type</th>
-                <th>id</th>
-            </tr>
-            <tr style="overflow: scroll;">
-                <td>{{option (class="form-check-input", data_click="select-skip", value=addresses.items[i].id)}}</td>
-                <td>{{addresses.items[i].address}}</td>
-                <td>{{addresses.items[i].city}}</td>
-                <td>{{addresses.items[i].state}}</td>
-                <td>{{addresses.items[i].zip}}</td>
-                <td>{{addresses.items[i].owner_occupied}}</td>
-                <td>{{addresses.items[i].property_type}}</td>
-                <td>{{addresses.items[i].id}}</td>
-            </tr>
-        </table>
-        {% if addresses.items[i].leads %}
-
-        <table class="table table-striped" style="margin-left: 30px;">
-            <tr style="overflow: scroll; height: 10px;">
-                <th>{{leads_form.select_lead.label}}</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Phone numbers</th>
-                <th>contacted</th>
-                <th>contact time</th>
-                <th>Trace Date</th>
-                <th>Last Trace</th>
-                <th>Template Sent</th>
-                <th>Response</th>
-                <th>Motivation Level</th>
-                <th>Age</th>
-                <th>id</th>
-            </tr>
-        {% for tuple in addresses.items[i].forms %}
-        {% set option = tuple[0] %}
-        {% set lead = tuple[1] %}
-            <tr style="overflow: scroll; height: 10px;">
-                
-                <td>{{option (class="form-check-input", data_click="select-sms") }}</td>
-                <td>{{lead.first_name}}</td>
-                <td>{{lead.last_name}}</td>
-                <td>{{lead.mobile_phones}}</td>
-                <td>{{lead.contacted}}</td>
-                <td>{{lead.contact_time}}</td>
-                <td>{{lead.trace_date}}</td>
-                <td>{{lead.last_trace}}</td>
-                <td>{{lead.template_sent}}</td>
-                <td>{{lead.response}}</td>
-                <td>{{lead.motivation_level}}</td>
-                <td>{{lead.age}}</td>
-                <td>{{lead.id}}</td>
+        <div class="address-container">
+            <table class="table table-striped">
+                <tr class="mc_header address_header">
+                    <th>{{leads_form.select_address.label}}</th>
+                    <th>address</th>
+                    <th>city</th>
+                    <th>state</th>
+                    <th>zip</th>
+                    <th>owner occupied</th>
+                    <th>property type</th>
+                    <th>id</th>
                 </tr>
+                <tr>
+                    <td>{{option (class="form-check-input", data_click="address", data_pair=addresses.items[i].id, value=addresses.items[i].id)}}
+                    </td>
+                    <td>{{addresses.items[i].address}}</td>
+                    <td>{{addresses.items[i].city}}</td>
+                    <td>{{addresses.items[i].state}}</td>
+                    <td>{{addresses.items[i].zip}}</td>
+                    <td>{{addresses.items[i].owner_occupied}}</td>
+                    <td>{{addresses.items[i].property_type}}</td>
+                    <td>{{addresses.items[i].id}}</td>
+                </tr>
+            </table>
+            {% if addresses.items[i].leads %}
+            <table class="table table-striped lead_table">
+                <tr class="lead_header">
+                    <th>{{leads_form.select_lead.label}}</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Phone numbers</th>
+                    <th>contacted</th>
+                    <th>contact time</th>
+                    <th>Trace Date</th>
+                    <th>Last Trace</th>
+                    <th>Template Sent</th>
+                    <th>Response</th>
+                    <th>Motivation Level</th>
+                    <th>Age</th>
+                    <th>id</th>
+                </tr>
+                {% for tuple in addresses.items[i].forms %}
+                {% set option = tuple[0] %}
+                {% set lead = tuple[1] %}
+                <tr>
+                    <td>{{option (class="form-check-input", data_click="lead", data_pair=addresses.items[i].id)}}
+                    </td>
+                    <td>{{lead.first_name}}</td>
+                    <td>{{lead.last_name}}</td>
+                    <td>
+                        {% for number in lead.mobile_phones %}
+                        {{number}},
+                        {% endfor %}
+                    </td>
+                    <td>{{lead.contacted}}</td>
+                    <td>{{lead.contact_time}}</td>
+                    <td>{{lead.trace_date}}</td>
+                    <td>{{lead.last_trace}}</td>
+                    <td>{{lead.template_sent}}</td>
+                    <td>{{lead.response}}</td>
+                    <td>{{lead.motivation_level}}</td>
+                    <td>{{lead.age}}</td>
+                    <td>{{lead.id}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+        </div>
         {% endfor %}
-            
-        </table>
-        {% endif %}
-        {% endfor %}
-        </table>
-        {{ leads_form.sms_submit (class="btn btn-secondary", style="margin-bottom: 10px;", data_flag="template_button")}}
+        {{ leads_form.sms_submit (class="btn btn-secondary", style="margin-bottom: 10px;",
+        data_flag="template_button")}}
         {{ leads_form.skip_submit (class="btn btn-secondary", style="margin-bottom: 10px;") }}
         <p>Texts Remaining: {{current_user.texts_left}}</p>
     </form>
@@ -121,40 +131,35 @@
 
 <!-- Pagination Links-->
 <div class="text-right" style="float: right; margin-top: 11px;">
-    <a href="{{ url_for('leads.main', page=addresses.prev_num) }}"
-       class="btn btn-outline-dark 
+    <a href="{{ url_for('leads.main', page=addresses.prev_num) }}" class="btn btn-outline-dark 
        {% if addresses.page == 1 %}disabled{% endif %}">
         &laquo;
     </a>
-<!-- Loop through the number of pages to display a link for each-->
+    <!-- Loop through the number of pages to display a link for each-->
     {% for page_num in addresses.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
-{% if page_num %}
-<!-- Check for the active page and set the link to "Active"-->
-            {% if addresses.page == page_num %}
-            <a href="{{ url_for('leads.main', page=page_num) }}"
-               class="btn btn-dark">
-                {{ page_num }}
-            </a>
-            {% else %}
-            <a href="{{ url_for('leads.main', page=page_num) }}"
-               class="btn btn-outline-dark">
-                {{ page_num }}
-            </a>
-            {% endif %}
-        {% else %}
-            ...
-        {% endif %}
+    {% if page_num %}
+    <!-- Check for the active page and set the link to "Active"-->
+    {% if addresses.page == page_num %}
+    <a href="{{ url_for('leads.main', page=page_num) }}" class="btn btn-dark">
+        {{ page_num }}
+    </a>
+    {% else %}
+    <a href="{{ url_for('leads.main', page=page_num) }}" class="btn btn-outline-dark">
+        {{ page_num }}
+    </a>
+    {% endif %}
+    {% else %}
+    ...
+    {% endif %}
     {% endfor %}
-    <a href="{{ url_for('leads.main', page=addresses.next_num) }}"
-       class="btn btn-outline-dark 
+    <a href="{{ url_for('leads.main', page=addresses.next_num) }}" class="btn btn-outline-dark 
        {% if addresses.page == addresses.pages %}disabled{% endif %}">
         &raquo;
     </a>
 </div>
 <p class="text-right mt-3">
-   Showing page {{ addresses.page }} of {{ addresses.pages }}
+    Showing page {{ addresses.page }} of {{ addresses.pages }}
 </p>
 {% endif %}
 
 {% endblock %}
-

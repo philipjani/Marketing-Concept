@@ -69,7 +69,8 @@ type "docker-compose down" in a different terminal to stop the server. ( or you 
 - add option to bypass last trace
     currently the user cannot skiptrace a lead twice. Add a way for the user to bypass that
 - add optional automatic deletion of contacts that can't be traced
-
+- add way to only text specific numbers of a lead.
+    - currently texts all
 - better format the leads table to fit screen display data more intuitively
 - impliment unit testing for site reliability
 - rename database classes to follow best practices (CamelCase)
