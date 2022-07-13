@@ -74,7 +74,8 @@ type "docker-compose down" in a different terminal to stop the server. ( or you 
 - better format the leads table to fit screen display data more intuitively
 - impliment unit testing for site reliability
 - rename database classes to follow best practices (CamelCase)
-
+- add way to filter leads/addresses
+- add way to batch skiptrace and add to sms campain. (this would require celery)
 
 
 **Heroku:**
